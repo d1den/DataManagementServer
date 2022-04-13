@@ -5,6 +5,9 @@ using DataManagementServer.Sdk.Channels;
 
 namespace DataManagementServer.Core.Channels
 {
+    /// <summary>
+    /// Группа каналов
+    /// </summary>
     public class Group
     {
         /// <summary>
@@ -68,7 +71,7 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Преобразовать к модели
         /// </summary>
-        /// <param name="allFields">Получить все поля или никаких</param>
+        /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Модель группы</returns>
         public GroupModel ToModel(bool allFields = false)
         {

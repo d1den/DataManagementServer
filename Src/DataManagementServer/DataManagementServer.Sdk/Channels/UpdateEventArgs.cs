@@ -3,7 +3,7 @@
 namespace DataManagementServer.Sdk.Channels
 {
     /// <summary>
-    /// Аргумент события обновления
+    /// Аргумент события обновления элемента
     /// </summary>
     public class UpdateEventArgs
     {

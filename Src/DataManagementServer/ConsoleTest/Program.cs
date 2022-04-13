@@ -1,42 +1,50 @@
 ﻿using DataManagementServer.Core.Channels;
 using DataManagementServer.Sdk.Channels;
 using System;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DataManagementServer.Core.Services;
 
-var channel = new Channel();
-var model = new ChannelModel()
+var service = new OrganizationService() as IGroupService;
+var cts = new CancellationTokenSource();
+var group1 = service.Create();
+service.SubscribeOnUpdate(group1, e =>
 {
-    Id = channel.Id,
-    ValueType = TypeCode.Int32,
-    Value = 12
-};
-
-channel.ObservableUpdate.Select(data => data.EventArgs).Subscribe(e =>
-{
-    Console.WriteLine("-------");
-    Console.WriteLine($"Channel {e.Id} updated");
-    foreach(var field in e.UpdatedFields)
+    Console.WriteLine("------");
+    Console.WriteLine("Group update");
+    Console.WriteLine(e.Id);
+    foreach (var field in e.UpdatedFields)
     {
-        Console.WriteLine($"Field '{field.Key}' new value = {field.Value}");
+        Console.WriteLine($"Fields '{field.Key}' - '{field.Value}'");
     }
-    Console.WriteLine("-------");
+    Console.WriteLine("------");
     Console.WriteLine();
-});
+},
+cts.Token);
+var group2 = service.Create(new GroupModel() { Name = "My group" });
+var group3 = service.Create(new GroupModel() { Name = "Device 1", ParentId = group1 });
 
-channel.Update(model);
-
-model = new ChannelModel(channel.Id)
+service.Update(new GroupModel(group1) { Name = "First group" });
+var groups = service.RetrieveByParent(group1, true);
+foreach(var group in groups)
 {
-    Description = "New descr",
-    Name = "Very good name"
-};
-Thread.Sleep(TimeSpan.FromSeconds(1));
-channel.Update(model);
+    PrintGroup(group);
+}
+cts.Cancel();
+// !поправить!
+// у групп можно обновлять только имя - id родителя устанавливается при создании
+service.Update(new GroupModel(group1) { Name = "New name" });
 
-Thread.Sleep(TimeSpan.FromSeconds(1));
-channel.UpdateValue(500);
 
 Console.ReadLine();
+
+void PrintGroup(GroupModel group)
+{
+    Console.WriteLine("------");
+    Console.WriteLine($"Group {group.Id}");
+    Console.WriteLine($"Parent {group.ParentId}");
+    Console.WriteLine($"Name {group.Name}");
+    Console.WriteLine("------");
+    Console.WriteLine();
+}

@@ -252,7 +252,7 @@ namespace DataManagementServer.Core.Channels
                         Description = model.Description;
                         continue;
                     case ChannelScheme.ValueType:
-                        ValueType = model.ValueType ?? TypeCode.Double;
+                        ValueType = model.ValueType ?? TypeCode.Object;
                         continue;
                     case ChannelScheme.Value:
                         Value = model.Value;
