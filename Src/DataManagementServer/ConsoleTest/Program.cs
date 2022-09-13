@@ -5,8 +5,28 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataManagementServer.Core.Services;
+using Serilog;
+using Newtonsoft.Json;
+using System.Text;
+using System.Collections.Generic;
 
+var model = new List<ChannelModel>()
+{
+    new ChannelModel(),
+    new ChannelModel
+    {
+        Name = "Test2"
+    }
+};
+var str = JsonConvert.SerializeObject(model, Formatting.Indented);
+
+Console.ReadLine();
+/*
 var service = new OrganizationService() as IGroupService;
+service.SubscribeOnCollectionChange(e =>
+{
+    Console.WriteLine($"{e.Type} - Group {e.Id}");
+});
 var cts = new CancellationTokenSource();
 var group1 = service.Create();
 service.SubscribeOnUpdate(group1, e =>
@@ -35,7 +55,7 @@ cts.Cancel();
 // !поправить!
 // у групп можно обновлять только имя - id родителя устанавливается при создании
 service.Update(new GroupModel(group1) { Name = "New name" });
-
+service.Delete(group2, true);
 
 Console.ReadLine();
 
@@ -48,3 +68,4 @@ void PrintGroup(GroupModel group)
     Console.WriteLine("------");
     Console.WriteLine();
 }
+*/

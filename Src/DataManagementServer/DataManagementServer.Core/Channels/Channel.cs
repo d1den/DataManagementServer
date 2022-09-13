@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using DataManagementServer.Sdk.Channels;
+using DataManagementServer.Sdk.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using DataManagementServer.Sdk.Channels;
-using DataManagementServer.Sdk.Extensions;
 
 namespace DataManagementServer.Core.Channels
 {
@@ -40,7 +39,7 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Дополнительные поля канала
         /// </summary>
-        private readonly ConcurrentDictionary<string, object> _AdditionalFields = new();
+        private readonly Dictionary<string, object> _AdditionalFields = new();
 
         /// <summary>
         /// Событие обновления канала
@@ -48,7 +47,7 @@ namespace DataManagementServer.Core.Channels
         private event EventHandler<UpdateEventArgs> _UpdateEvent;
 
         /// <summary>
-        /// Объект для блокировки обновления канала
+        /// Объект для синхронизации потоков
         /// </summary>
         private readonly object _Mutex = new();
         #endregion
@@ -106,8 +105,7 @@ namespace DataManagementServer.Core.Channels
                     || Type.GetTypeCode(value?.GetType()) == ValueType)
                 {
                     _Value = value;
-                    UpdateOn = DateTime.Now;
-                    Status = ChannelStatus.Good;
+                    UpdateOn = DateTime.Now.ToUniversalTime();
                 }
                 else
                 {
@@ -118,7 +116,7 @@ namespace DataManagementServer.Core.Channels
         }
 
         /// <summary>
-        /// Дата обновления значения
+        /// Дата обновления значения в UTC
         /// </summary>
         private DateTime UpdateOn { get; set; }
 
@@ -182,8 +180,7 @@ namespace DataManagementServer.Core.Channels
                     new FieldValueCollection() 
                     {
                         [ChannelScheme.Value] = Value,
-                        [ChannelScheme.UpdateOn] = UpdateOn,
-                        [ChannelScheme.Status] = Status
+                        [ChannelScheme.UpdateOn] = UpdateOn
                     });
 
                 _UpdateEvent?.Invoke(this, eventArgs);
@@ -219,7 +216,6 @@ namespace DataManagementServer.Core.Channels
                 if (model.Fields.ContainsKey(ChannelScheme.Value))
                 {
                     eventArgs.UpdatedFields[ChannelScheme.UpdateOn] = UpdateOn;
-                    eventArgs.UpdatedFields[ChannelScheme.Status] = Status;
                 }
 
                 _UpdateEvent?.Invoke(this, eventArgs);
@@ -258,7 +254,8 @@ namespace DataManagementServer.Core.Channels
                         Value = model.Value;
                         continue;
                     case ChannelScheme.UpdateOn:
-                        UpdateOn = model.UpdateOn ?? DateTime.Now;
+                        UpdateOn = model.UpdateOn?.ToUniversalTime() 
+                            ?? DateTime.MinValue.ToUniversalTime();
                         continue;
                     case ChannelScheme.Status:
                         Status = model.Status ?? ChannelStatus.Good;
@@ -278,16 +275,20 @@ namespace DataManagementServer.Core.Channels
         /// <exception cref="ArgumentException">Ошибка при несоответсвии типа и типа значения канала</exception>
         public T GetValue<T>()
         {
-            if (Nullable.GetUnderlyingType(typeof(T)) == null
-                && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
+            lock (_Mutex)
             {
-                throw new ArgumentException(string
-                    .Format(_TypeErrorTemplate, typeof(T).Name, ValueType));
+                if (Nullable.GetUnderlyingType(typeof(T)) == null
+                    && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
+                {
+                    throw new ArgumentException(string
+                        .Format(_TypeErrorTemplate, typeof(T).Name, ValueType));
+                }
+                if (Value is T value)
+                {
+                    return value;
+                }
             }
-            if (Value is T value)
-            {
-                return value;
-            }
+
             return default;
         }
 
@@ -302,15 +303,19 @@ namespace DataManagementServer.Core.Channels
             value = default;
             try
             {
-                if (Nullable.GetUnderlyingType(typeof(T)) == null
-                    && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
+                lock (_Mutex)
                 {
-                    return false;
+                    if (Nullable.GetUnderlyingType(typeof(T)) == null
+                        && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
+                    {
+                        return false;
+                    }
+                    if (Value is T)
+                    {
+                        value = (T)Value;
+                    }
                 }
-                if (Value is T)
-                {
-                    value = (T)Value;
-                }
+
                 return true;
             }
             catch
@@ -331,21 +336,25 @@ namespace DataManagementServer.Core.Channels
                 return new ChannelModel(Id);
             }
 
-            var model = new ChannelModel(Id)
+            lock (_Mutex)
             {
-                GroupId = GroupId,
-                Name = Name,
-                Description = Description,
-                ValueType = ValueType,
-                Value = Value,
-                UpdateOn = UpdateOn,
-                Status = Status
-            };
-            foreach (var field in _AdditionalFields)
-            {
-                model.Fields.Add(field.Key, field.Value);
+                var model = new ChannelModel(Id)
+                {
+                    GroupId = GroupId,
+                    Name = Name,
+                    Description = Description,
+                    ValueType = ValueType,
+                    Value = Value,
+                    UpdateOn = UpdateOn,
+                    Status = Status
+                };
+                foreach (var field in _AdditionalFields)
+                {
+                    model.Fields.Add(field.Key, field.Value);
+                }
+
+                return model;
             }
-            return model;
         }
 
         /// <summary>
@@ -360,26 +369,30 @@ namespace DataManagementServer.Core.Channels
             {
                 return model;
             }
-            
-            foreach(var field in fields)
+
+            lock (_Mutex)
             {
-                switch (field)
+                foreach (var field in fields)
                 {
-                    case ChannelScheme.GroupId: model.GroupId = GroupId; continue;
-                    case ChannelScheme.Name: model.Name = Name; continue;
-                    case ChannelScheme.Description: model.Description = Description; continue;
-                    case ChannelScheme.ValueType: model.ValueType = ValueType; continue;
-                    case ChannelScheme.Value: model.Value = Value; continue;
-                    case ChannelScheme.UpdateOn: model.UpdateOn = UpdateOn; continue;
-                    case ChannelScheme.Status: model.Status = Status; continue;
-                    default: 
-                        if (_AdditionalFields.TryGetValue(field, out object value))
-                        {
-                            model.Fields.Add(field, value);
-                        }
-                        break;
+                    switch (field)
+                    {
+                        case ChannelScheme.GroupId: model.GroupId = GroupId; continue;
+                        case ChannelScheme.Name: model.Name = Name; continue;
+                        case ChannelScheme.Description: model.Description = Description; continue;
+                        case ChannelScheme.ValueType: model.ValueType = ValueType; continue;
+                        case ChannelScheme.Value: model.Value = Value; continue;
+                        case ChannelScheme.UpdateOn: model.UpdateOn = UpdateOn; continue;
+                        case ChannelScheme.Status: model.Status = Status; continue;
+                        default:
+                            if (_AdditionalFields.TryGetValue(field, out object value))
+                            {
+                                model.Fields.Add(field, value);
+                            }
+                            break;
+                    }
                 }
             }
+
             return model;
         }
     }

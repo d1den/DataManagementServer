@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Threading;
 
@@ -59,15 +60,15 @@ namespace DataManagementServer.Sdk.Channels
         /// </summary>
         /// <param name="parentId">Id родителской группы</param>
         /// <param name="allFields">Получить все поля или только Id</param>
-        /// <returns>Массив моделей групп</returns>
-        GroupModel[] RetrieveByParent(Guid parentId = default, bool allFields = true);
+        /// <returns>Список моделей групп</returns>
+        List<GroupModel> RetrieveByParent(Guid parentId = default, bool allFields = true);
 
         /// <summary>
         /// Получить все группы
         /// </summary>
         /// <param name="allFields">Получить все поля или только Id</param>
-        /// <returns>Массив моделей групп</returns>
-        GroupModel[] RetrieveAll(bool allFields = false);
+        /// <returns>Список моделей групп</returns>
+        List<GroupModel> RetrieveAll(bool allFields = false);
         #endregion
 
         #region Update

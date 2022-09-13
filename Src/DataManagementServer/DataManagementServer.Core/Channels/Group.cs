@@ -36,6 +36,11 @@ namespace DataManagementServer.Core.Channels
         public IObservable<EventPattern<UpdateEventArgs>> ObservableUpdate { get; }
 
         /// <summary>
+        /// Объект для синхронизации потоков
+        /// </summary>
+        private readonly object _Mutex = new();
+
+        /// <summary>
         /// Конструктор
         /// </summary>
         public Group()
@@ -79,7 +84,11 @@ namespace DataManagementServer.Core.Channels
             {
                 return new GroupModel(Id);
             }
-            return new GroupModel(Id) { ParentId = ParentId, Name = Name };
+
+            lock (_Mutex)
+            {
+                return new GroupModel(Id) { ParentId = ParentId, Name = Name };
+            }
         }
 
         /// <summary>
@@ -98,9 +107,12 @@ namespace DataManagementServer.Core.Channels
             {
                 throw new ArgumentException(nameof(model.Id));
             }
-            SetFieldsByModel(model);
-            _UpdateEvent?.Invoke(this,
-                new UpdateEventArgs(Id, model.Fields.Clone() as FieldValueCollection));
+            lock (_Mutex)
+            {
+                SetFieldsByModel(model);
+                _UpdateEvent?.Invoke(this,
+                    new UpdateEventArgs(Id, model.Fields.Clone() as FieldValueCollection));
+            }
         }
 
         /// <summary>

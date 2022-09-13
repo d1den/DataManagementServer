@@ -34,7 +34,6 @@ namespace DataManagementServer.Core.Tests.Channels
             // Assert
             Assert.AreEqual(newModel.Value, arrangeValue);
             Assert.AreNotEqual(newModel.UpdateOn, oldUpdateOn);
-            Assert.AreNotEqual(newModel.Status, oldStatus);
         }
 
         [TestMethod]
@@ -93,7 +92,7 @@ namespace DataManagementServer.Core.Tests.Channels
             Assert.AreEqual(newModel.ValueType, arrangeType);
             Assert.AreEqual(newModel.Value, arrangeValue);
             Assert.AreEqual(newModel.Status, arrangeStatus);
-            Assert.AreEqual(newModel.UpdateOn, arrangeUpdatedOn);
+            Assert.AreEqual(newModel.UpdateOn, arrangeUpdatedOn.ToUniversalTime());
             Assert.AreEqual(addFieldValue, addField);
         }
 
@@ -377,7 +376,7 @@ namespace DataManagementServer.Core.Tests.Channels
             Assert.AreEqual(newModel.ValueType, arrangeType);
             Assert.AreEqual(newModel.Value, arrangeValue);
             Assert.AreEqual(newModel.Status, arrangeStatus);
-            Assert.AreEqual(newModel.UpdateOn, arrangeUpdatedOn);
+            Assert.AreEqual(newModel.UpdateOn, arrangeUpdatedOn.ToUniversalTime());
             Assert.AreEqual(addFieldValue, addField);
         }
 

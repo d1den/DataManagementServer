@@ -57,37 +57,37 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="id">Id канала</param>
         /// <param name="fields">Список полей для модели</param>
         /// <returns>Модель канала</returns>
-        ChannelModel Retrieve(Guid id, IEnumerable<string> fields = null);
+        ChannelModel Retrieve(Guid id, params string[] fields);
 
         /// <summary>
         /// Получить набор каналов по группе
         /// </summary>
         /// <param name="groupId">Id группы</param>
         /// <param name="allFields">Получить все поля или только Id</param>
-        /// <returns>Массив моделей каналов</returns>
-        ChannelModel[] RetrieveByGroup(Guid groupId, bool allFields);
+        /// <returns>Список моделей каналов</returns>
+        List<ChannelModel> RetrieveByGroup(Guid groupId, bool allFields);
 
         /// <summary>
         /// Получить набор каналов по группе
         /// </summary>
         /// <param name="groupId">Id группы</param>
         /// <param name="fields">Список полей для модели</param>
-        /// <returns>Массив моделей каналов</returns>
-        ChannelModel[] RetrieveByGroup(Guid groupId = default, IEnumerable<string> fields = null);
+        /// <returns>Список моделей каналов</returns>
+        List<ChannelModel> RetrieveByGroup(Guid groupId = default, params string[] fields);
 
         /// <summary>
         /// Получить все каналы
         /// </summary>
         /// <param name="allFields">Получить все поля или только Id</param>
-        /// <returns>Массив моделей каналов</returns>
-        ChannelModel[] RetrieveAll(bool allFields);
+        /// <returns>Список моделей каналов</returns>
+        List<ChannelModel> RetrieveAll(bool allFields);
 
         /// <summary>
         /// Получить все каналы
         /// </summary>
         /// <param name="fields">Список полей для модели</param>
-        /// <returns>Массив моделей каналов</returns>
-        ChannelModel[] RetrieveAll(IEnumerable<string> fields = null);
+        /// <returns>Список моделей каналов</returns>
+        List<ChannelModel> RetrieveAll(params string[] fields);
 
         /// <summary>
         /// Получить значение канала
