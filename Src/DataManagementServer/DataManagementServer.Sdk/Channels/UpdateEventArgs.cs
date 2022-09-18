@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataManagementServer.Common.Models;
+using System;
 
 namespace DataManagementServer.Sdk.Channels
 {

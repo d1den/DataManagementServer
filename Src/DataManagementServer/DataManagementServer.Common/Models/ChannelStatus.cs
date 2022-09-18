@@ -1,4 +1,4 @@
-﻿namespace DataManagementServer.Sdk.Channels
+﻿namespace DataManagementServer.Common.Models
 {
     /// <summary>
     /// Статус Канала
