@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataManagementServer.Sdk.Devices;
+using System;
 
 namespace DataManagementServer.Sdk.Plugins
 {
@@ -27,21 +24,14 @@ namespace DataManagementServer.Sdk.Plugins
         PluginType Type { get; }
 
         /// <summary>
-        /// Получить строку с конфигурацией плагина
+        /// Менеджер устройств
         /// </summary>
-        /// <returns>Json строка с конфигурацией</returns>
-        string GetConfig();
-
-        /// <summary>
-        /// Инициализировать плагин по json строке
-        /// </summary>
-        /// <param name="jsonDevicesConfig">Json строка с конфигурацией</param>
-        void InitByConfig(string jsonDevicesConfig);
+        IDeviceManager DeviceManager { get; }
 
         /// <summary>
         /// Создать плагин
         /// </summary>
         /// <param name="serviceProvider">Провайдер сервисов ядра</param>
-        void CreatePlugin(IServiceProvider serviceProvider);
+        void Initialize(IServiceProvider serviceProvider);
     }
 }

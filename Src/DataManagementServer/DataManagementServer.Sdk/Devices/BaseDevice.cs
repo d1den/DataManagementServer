@@ -96,8 +96,14 @@ namespace DataManagementServer.Sdk.Devices
 
         public void Start()
         {
+            if (Status == DeviceStatus.Runnig 
+                && _WorkTask != null && _WorkTask.Status == TaskStatus.Running)
+            {
+                return;
+            }
             _CancellationTokenSource = new CancellationTokenSource();
             var token = _CancellationTokenSource.Token;
+            Status = DeviceStatus.Runnig;
             _WorkTask = Task.Run(() => DoWork(token), token);
         }
 
@@ -105,8 +111,15 @@ namespace DataManagementServer.Sdk.Devices
         {
             try
             {
+                if (Status == DeviceStatus.Stoped
+                    && _WorkTask == null 
+                    && (_WorkTask.Status == TaskStatus.Canceled || _WorkTask.Status == TaskStatus.RanToCompletion))
+                {
+                    return;
+                }
                 _CancellationTokenSource?.Cancel();
                 _WorkTask?.Wait();
+                Status = DeviceStatus.Stoped;
             }
             catch(AggregateException ex)
             {
@@ -117,6 +130,7 @@ namespace DataManagementServer.Sdk.Devices
         public Task StopAsync()
         {
             _CancellationTokenSource?.Cancel();
+            Status = DeviceStatus.Stoped;
             return _WorkTask;
         }
 
@@ -142,6 +156,7 @@ namespace DataManagementServer.Sdk.Devices
             }
             catch (Exception)
             {
+                Status = DeviceStatus.Error;
                 throw;
             }
         }
