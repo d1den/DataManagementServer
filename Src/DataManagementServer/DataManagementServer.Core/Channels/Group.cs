@@ -4,13 +4,14 @@ using DataManagementServer.Sdk.Channels;
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace DataManagementServer.Core.Channels
 {
     /// <summary>
     /// Группа каналов
     /// </summary>
-    public class Group
+    public class Group : IDisposable
     {
         /// <summary>
         /// Id группы
@@ -40,7 +41,12 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Объект для синхронизации потоков
         /// </summary>
-        private readonly object _Mutex = new();
+        private readonly ReaderWriterLockSlim _Lock = new();
+
+        /// <summary>
+        /// Уже уничтожен?
+        /// </summary>
+        private bool _IsDisposed = false;
 
         /// <summary>
         /// Конструктор
@@ -86,10 +92,14 @@ namespace DataManagementServer.Core.Channels
             {
                 return new GroupModel(Id);
             }
-
-            lock (_Mutex)
+            _Lock.EnterReadLock();
+            try
             {
                 return new GroupModel(Id) { ParentId = ParentId, Name = Name };
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
             }
         }
 
@@ -109,11 +119,17 @@ namespace DataManagementServer.Core.Channels
             {
                 throw new ArgumentException(nameof(model.Id));
             }
-            lock (_Mutex)
+
+            _Lock.EnterWriteLock();
+            try
             {
                 SetFieldsByModel(model);
                 _UpdateEvent?.Invoke(this,
                     new UpdateEventArgs(Id, model.Fields.Clone() as FieldValueCollection));
+            }
+            finally
+            {
+                _Lock.ExitWriteLock();
             }
         }
 
@@ -142,6 +158,17 @@ namespace DataManagementServer.Core.Channels
                     default: continue;
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            if (_IsDisposed)
+            {
+                return;
+            }
+
+            _Lock.Dispose();
+            _IsDisposed = true;
         }
     }
 }

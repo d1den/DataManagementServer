@@ -12,16 +12,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-var channelModel = new ChannelModel()
+var channel = new Channel(new ChannelModel()
 {
-    Id = Guid.NewGuid(),
-    Name = "test"
-};
+    ValueType = TypeCode.String,
+    Value = "Hello World!"
+});
 
-var model = channelModel as BaseModel;
-var json = JsonConvert.SerializeObject(model);
-
-var baseModels = JsonConvert.DeserializeObject<ChannelModel>(json);
-
-
+channel.TryGetValue<int>(out int value);
 Console.ReadLine();

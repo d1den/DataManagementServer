@@ -6,13 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace DataManagementServer.Core.Channels
 {
     /// <summary>
     /// Канал системы - основная сущность данных
     /// </summary>
-    public class Channel
+    public class Channel : IDisposable
     {
         #region Константы
         /// <summary>
@@ -51,7 +52,12 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Объект для синхронизации потоков
         /// </summary>
-        private readonly object _Mutex = new();
+        private readonly ReaderWriterLockSlim _Lock = new();
+
+        /// <summary>
+        /// Уже уничтожен?
+        /// </summary>
+        private bool _IsDisposed = false;
         #endregion
 
         #region Свойства
@@ -174,18 +180,22 @@ namespace DataManagementServer.Core.Channels
         /// <param name="value">Значение</param>
         public void UpdateValue(object value)
         {
-            lock (_Mutex)
+            _Lock.EnterWriteLock();
+            try
             {
                 Value = value;
-
                 var eventArgs = new UpdateEventArgs(Id,
-                    new FieldValueCollection() 
+                    new FieldValueCollection()
                     {
                         [ChannelScheme.Value] = Value,
                         [ChannelScheme.UpdateOn] = UpdateOn
                     });
 
                 _UpdateEvent?.Invoke(this, eventArgs);
+            }
+            finally
+            {
+                _Lock.ExitWriteLock();
             }
         }
 
@@ -205,11 +215,12 @@ namespace DataManagementServer.Core.Channels
             {
                 throw new ArgumentException(nameof(model.Id));
             }
-            lock (_Mutex)
+            _Lock.EnterWriteLock();
+            try
             {
                 SetFieldsByModel(model);
 
-                var eventArgs = new UpdateEventArgs(Id, 
+                var eventArgs = new UpdateEventArgs(Id,
                     model.Fields.Clone() as FieldValueCollection);
                 if (model.Fields.ContainsKey(ChannelScheme.ValueType))
                 {
@@ -221,6 +232,10 @@ namespace DataManagementServer.Core.Channels
                 }
 
                 _UpdateEvent?.Invoke(this, eventArgs);
+            }
+            finally
+            {
+                _Lock.ExitWriteLock();
             }
         }
 
@@ -277,7 +292,8 @@ namespace DataManagementServer.Core.Channels
         /// <exception cref="ArgumentException">Ошибка при несоответсвии типа и типа значения канала</exception>
         public T GetValue<T>()
         {
-            lock (_Mutex)
+            _Lock.EnterReadLock();
+            try
             {
                 if (Nullable.GetUnderlyingType(typeof(T)) == null
                     && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
@@ -289,6 +305,10 @@ namespace DataManagementServer.Core.Channels
                 {
                     return value;
                 }
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
             }
 
             return default;
@@ -303,26 +323,27 @@ namespace DataManagementServer.Core.Channels
         public bool TryGetValue<T>(out T value)
         {
             value = default;
+            _Lock.EnterReadLock();
             try
             {
-                lock (_Mutex)
-                {
-                    if (Nullable.GetUnderlyingType(typeof(T)) == null
+                if (Nullable.GetUnderlyingType(typeof(T)) == null
                         && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
-                    {
-                        return false;
-                    }
-                    if (Value is T)
-                    {
-                        value = (T)Value;
-                    }
+                {
+                    return false;
                 }
-
+                if (Value is T val)
+                {
+                    value = val;
+                }
                 return true;
             }
             catch
             {
                 return false;
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
             }
         }
 
@@ -337,8 +358,8 @@ namespace DataManagementServer.Core.Channels
             {
                 return new ChannelModel(Id);
             }
-
-            lock (_Mutex)
+            _Lock.EnterReadLock();
+            try
             {
                 var model = new ChannelModel(Id)
                 {
@@ -357,6 +378,10 @@ namespace DataManagementServer.Core.Channels
 
                 return model;
             }
+            finally
+            {
+                _Lock.ExitReadLock();
+            }
         }
 
         /// <summary>
@@ -371,8 +396,8 @@ namespace DataManagementServer.Core.Channels
             {
                 return model;
             }
-
-            lock (_Mutex)
+            _Lock.EnterReadLock();
+            try
             {
                 foreach (var field in fields)
                 {
@@ -393,9 +418,24 @@ namespace DataManagementServer.Core.Channels
                             break;
                     }
                 }
+
+                return model;
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_IsDisposed)
+            {
+                return;
             }
 
-            return model;
+            _Lock.Dispose();
+            _IsDisposed = true;
         }
     }
 }

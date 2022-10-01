@@ -35,6 +35,11 @@ namespace DataManagementServer.Sdk.Devices
         /// </summary>
         protected readonly ConcurrentDictionary<Guid, TDevice> _Devices = new ();
 
+        /// <summary>
+        /// Уже уничтожен?
+        /// </summary>
+        protected bool _IsDisposed = false;
+
         public int Count => _Devices.Count;
 
         /// <summary>
@@ -123,6 +128,21 @@ namespace DataManagementServer.Sdk.Devices
         public bool TryRemove(Guid id)
         {
             return _Devices.TryRemove(id, out _);
+        }
+
+        public void Dispose()
+        {
+            if (_IsDisposed)
+            {
+                return;
+            }
+
+            foreach(var device in _Devices.Values)
+            {
+                device.Dispose();
+            }
+
+            _IsDisposed = true;
         }
     }
 }

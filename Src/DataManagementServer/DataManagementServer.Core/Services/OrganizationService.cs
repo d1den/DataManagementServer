@@ -14,7 +14,7 @@ namespace DataManagementServer.Core.Services
     /// <summary>
     /// Сервис организации работы с каналами и группам
     /// </summary>
-    public class OrganizationService : IGroupService, IChannelService
+    public class OrganizationService : IGroupService, IChannelService, IDisposable
     {
         /// <summary>
         /// Шаблон ошибки об отсуствии группы с запрашиваемым Id
@@ -57,6 +57,11 @@ namespace DataManagementServer.Core.Services
         private readonly IObservable<EventPattern<CollectionChangeEventArgs>> _ChannelsObservable;
 
         /// <summary>
+        /// Уже уничтожен?
+        /// </summary>
+        private bool _IsDisposed = false;
+
+        /// <summary>
         /// Конструктор
         /// </summary>
         public OrganizationService()
@@ -70,6 +75,26 @@ namespace DataManagementServer.Core.Services
                 .FromEventPattern<CollectionChangeEventArgs>(
                 handler => _ChannelsChangeEvent += handler,
                 handler => _ChannelsChangeEvent -= handler);
+        }
+
+        public void Dispose()
+        {
+            if (_IsDisposed)
+            {
+                return;
+            }
+
+            foreach(var group in _Groups.Values)
+            {
+                group.Dispose();
+            }
+
+            foreach(var channel in _Channels.Values)
+            {
+                channel.Dispose();
+            }
+
+            _IsDisposed = true;
         }
 
         #region Groups
@@ -163,10 +188,11 @@ namespace DataManagementServer.Core.Services
         #region Delete
         void IGroupService.Delete(Guid id, bool withChildren)
         {
-            if (!_Groups.Remove(id, out Group g))
+            if (!_Groups.Remove(id, out Group baseGroup))
             {
                 throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
             }
+            baseGroup.Dispose();
 
             _GroupsChangeEvent?.Invoke(this,
                 new CollectionChangeEventArgs(id, CollectionChangeType.DeleteElement));
@@ -176,10 +202,11 @@ namespace DataManagementServer.Core.Services
                 var deleteChannels = _Channels
                     .Select(pair => pair.Value)
                     .Where(channel => channel.GroupId == id);
-                foreach(var channel in deleteChannels)
+                foreach (var channel in deleteChannels)
                 {
                     (this as IChannelService).Delete(channel.Id);
                 }
+
                 var deleteGroups = _Groups
                     .Select(pair => pair.Value)
                     .Where(group => group.ParentId == id);
@@ -380,6 +407,7 @@ namespace DataManagementServer.Core.Services
             {
                 throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
             }
+            channel.Dispose();
 
             _ChannelsChangeEvent?.Invoke(this,
                 new CollectionChangeEventArgs(channel.Id, CollectionChangeType.DeleteElement));

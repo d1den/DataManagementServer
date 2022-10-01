@@ -58,7 +58,12 @@ namespace DataManagementServer.Sdk.Devices
         /// <summary>
         /// Объект для синхронизации потоков
         /// </summary>
-        protected readonly object _Mutex = new object();
+        protected readonly ReaderWriterLockSlim _Lock = new ();
+
+        /// <summary>
+        /// Уже уничтожен?
+        /// </summary>
+        protected bool _IsDisposed = false;
 
         /// <summary>
         /// Конструктор класса
@@ -94,6 +99,8 @@ namespace DataManagementServer.Sdk.Devices
             PollingPeriod = model.PollingPeriod == default ? BasePollingPeriod : model.PollingPeriod;
         }
 
+        
+
         public void Start()
         {
             if (Status == DeviceStatus.Runnig 
@@ -105,6 +112,7 @@ namespace DataManagementServer.Sdk.Devices
             var token = _CancellationTokenSource.Token;
             Status = DeviceStatus.Runnig;
             _WorkTask = Task.Run(() => DoWork(token), token);
+            _WorkTask.ConfigureAwait(false);
         }
 
         public void Stop()
@@ -147,7 +155,7 @@ namespace DataManagementServer.Sdk.Devices
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     IterateWorkLoop(cancellationToken);
-                    Task.Delay(PollingPeriod, cancellationToken).Wait();
+                    Thread.Sleep(PollingPeriod);
                 }
             }
             catch (OperationCanceledException)
@@ -175,9 +183,14 @@ namespace DataManagementServer.Sdk.Devices
 
         public virtual BaseDeviceModel ToModel()
         {
-            lock (_Mutex)
+            _Lock.EnterReadLock();
+            try
             {
                 return ToModelWithSync();
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
             }
         }
 
@@ -189,9 +202,14 @@ namespace DataManagementServer.Sdk.Devices
 
         public virtual void Update(BaseDeviceModel model)
         {
-            lock (_Mutex)
+            _Lock.EnterWriteLock();
+            try
             {
                 UpdateWithSync(model);
+            }
+            finally
+            {
+                _Lock.ExitWriteLock();
             }
         }
 
@@ -200,5 +218,27 @@ namespace DataManagementServer.Sdk.Devices
         /// </summary>
         /// <param name="model">Модель устройства</param>
         protected abstract void UpdateWithSync(BaseDeviceModel model);
+
+        public virtual void Dispose()
+        {
+            if (_IsDisposed)
+            {
+                return;
+            }
+
+            if (_CancellationTokenSource != null)
+            {
+                _CancellationTokenSource.Dispose();
+                _CancellationTokenSource = null;
+            }
+            if (_WorkTask != null)
+            {
+                _WorkTask.Dispose();
+                _WorkTask = null;
+            }
+            _Lock.Dispose();
+
+            _IsDisposed = true;
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace DataManagementServer.Sdk.Devices
     /// <summary>
     /// Менеджер устройств
     /// </summary>
-    public interface IDeviceManager
+    public interface IDeviceManager : IDisposable
     {
         /// <summary>
         /// Количество устройств

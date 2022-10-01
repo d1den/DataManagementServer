@@ -7,7 +7,7 @@ namespace DataManagementServer.Sdk.Devices
     /// <summary>
     /// Интерфейс устройства плагина
     /// </summary>
-    public interface IDevice
+    public interface IDevice : IDisposable
     {
         /// <summary>
         /// Id устройства
