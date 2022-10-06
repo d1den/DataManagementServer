@@ -1,68 +1,17 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
-namespace DataManagementServer.Sdk.Channels
+namespace DataManagementServer.Common.Models
 {
     /// <summary>
-    /// Группа каналов ядра
+    /// Базовая модель
     /// </summary>
-    public class GroupModel
+    public class BaseModel
     {
         /// <summary>
-        /// Id группы
+        /// Поля канала
         /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Id родительской группы
-        /// </summary>
-        [JsonIgnore]
-        public Guid? ParentId
-        {
-            get
-            {
-                if (TryGetFieldValue(GroupScheme.ParentId, out Guid parentId))
-                {
-                    return parentId;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                Fields[GroupScheme.ParentId] = value;
-            }
-        }
-
-        /// <summary>
-        /// Название группы
-        /// </summary>
-        [JsonIgnore]
-        public string Name
-        {
-            get
-            {
-                if (TryGetFieldValue(GroupScheme.Name, out string name))
-                {
-                    return name;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                Fields[GroupScheme.Name] = value;
-            }
-        }
-
-        /// <summary>
-        /// Поля группы
-        /// </summary>
-        public FieldValueCollection Fields { get; } = new ();
+        public FieldValueCollection Fields { get; } = new();
 
         /// <summary>
         /// Свойство доступа к поля модели
@@ -74,28 +23,6 @@ namespace DataManagementServer.Sdk.Channels
         {
             get { return Fields[fieldName]; }
             set { Fields.Add(fieldName, value); }
-        }
-
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        public GroupModel()
-        {
-
-        }
-
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        /// <param name="id">Id группы</param>
-        /// <exception cref="ArgumentNullException">Ошибка, если Id пустое</exception>
-        public GroupModel(Guid id)
-        {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-            Id = id;
         }
 
         #region Методы доступа к полям

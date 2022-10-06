@@ -1,4 +1,4 @@
-﻿namespace DataManagementServer.Sdk.Channels
+﻿namespace DataManagementServer.Common.Schemes
 {
     /// <summary>
     /// Схема с наименованием полей базовых Каналов

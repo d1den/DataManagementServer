@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataManagementServer.Sdk.Channels
+namespace DataManagementServer.Common.Models
 {
     /// <summary>
     /// Коллекция Значений полей

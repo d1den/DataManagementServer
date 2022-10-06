@@ -1,5 +1,6 @@
 ﻿using DataManagementServer.Core.Channels;
 using DataManagementServer.Sdk.Channels;
+using DataManagementServer.Common.Models;
 using System;
 using System.Reactive.Linq;
 using System.Threading;
@@ -9,63 +10,16 @@ using Serilog;
 using Newtonsoft.Json;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 
-var model = new List<ChannelModel>()
+var channel = new Channel(new ChannelModel()
 {
-    new ChannelModel(),
-    new ChannelModel
-    {
-        Name = "Test2"
-    }
-};
-var str = JsonConvert.SerializeObject(model, Formatting.Indented);
-
-Console.ReadLine();
-/*
-var service = new OrganizationService() as IGroupService;
-service.SubscribeOnCollectionChange(e =>
-{
-    Console.WriteLine($"{e.Type} - Group {e.Id}");
+    ValueType = TypeCode.String,
+    Value = "Hello World!"
 });
-var cts = new CancellationTokenSource();
-var group1 = service.Create();
-service.SubscribeOnUpdate(group1, e =>
-{
-    Console.WriteLine("------");
-    Console.WriteLine("Group update");
-    Console.WriteLine(e.Id);
-    foreach (var field in e.UpdatedFields)
-    {
-        Console.WriteLine($"Fields '{field.Key}' - '{field.Value}'");
-    }
-    Console.WriteLine("------");
-    Console.WriteLine();
-},
-cts.Token);
-var group2 = service.Create(new GroupModel() { Name = "My group" });
-var group3 = service.Create(new GroupModel() { Name = "Device 1", ParentId = group1 });
+var sub = channel.ObservableUpdate.Subscribe(s => Console.WriteLine(s.EventArgs.UpdatedFields.FirstOrDefault().Value));
+channel.UpdateValue("New string!");
+sub.Dispose();
 
-service.Update(new GroupModel(group1) { Name = "First group" });
-var groups = service.RetrieveByParent(group1, true);
-foreach(var group in groups)
-{
-    PrintGroup(group);
-}
-cts.Cancel();
-// !поправить!
-// у групп можно обновлять только имя - id родителя устанавливается при создании
-service.Update(new GroupModel(group1) { Name = "New name" });
-service.Delete(group2, true);
-
+channel.UpdateValue("dawdawdw");
 Console.ReadLine();
-
-void PrintGroup(GroupModel group)
-{
-    Console.WriteLine("------");
-    Console.WriteLine($"Group {group.Id}");
-    Console.WriteLine($"Parent {group.ParentId}");
-    Console.WriteLine($"Name {group.Name}");
-    Console.WriteLine("------");
-    Console.WriteLine();
-}
-*/
