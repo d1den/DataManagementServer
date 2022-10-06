@@ -6,23 +6,23 @@
     public enum PluginType
     {
         /// <summary>
-        /// Стандартный тип
+        /// Стандартный
         /// </summary>
         Default,
 
         /// <summary>
-        /// Источник данных
+        /// Транспортировщик данных 
         /// </summary>
-        DataSource,
+        DataTransporter,
 
         /// <summary>
-        /// Обработка данных
+        /// Обработчик данных
         /// </summary>
-        DataProccess,
+        DataProcessor,
 
         /// <summary>
-        /// Плагин оповещения
+        /// Отправитель оповещений
         /// </summary>
-        Notification
+        NotificationSender
     }
 }

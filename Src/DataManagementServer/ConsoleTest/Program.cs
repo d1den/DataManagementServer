@@ -17,6 +17,9 @@ var channel = new Channel(new ChannelModel()
     ValueType = TypeCode.String,
     Value = "Hello World!"
 });
+var sub = channel.ObservableUpdate.Subscribe(s => Console.WriteLine(s.EventArgs.UpdatedFields.FirstOrDefault().Value));
+channel.UpdateValue("New string!");
+sub.Dispose();
 
-channel.TryGetValue<int>(out int value);
+channel.UpdateValue("dawdawdw");
 Console.ReadLine();
