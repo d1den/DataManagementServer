@@ -1,10 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using DataManagementServer.Common.Models;
+using DataManagementServer.Common.Schemes;
 using DataManagementServer.Core.Channels;
-using DataManagementServer.Sdk.Channels;
-using System.Reactive.Linq;
-using System.Reactive;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace DataManagementServer.Core.Tests.Channels
 {
@@ -12,7 +10,7 @@ namespace DataManagementServer.Core.Tests.Channels
     public class ChannelTest
     {
         [TestMethod]
-        public void UpdateValue_CorrectType_GetNewValue()
+        public void UpdateValue_CorrectType()
         {
             // Arrange
             var oldUpdateOn = DateTime.Now.AddHours(-5);

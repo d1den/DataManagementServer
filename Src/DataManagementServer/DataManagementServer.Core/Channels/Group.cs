@@ -70,11 +70,10 @@ namespace DataManagementServer.Core.Channels
             {
                 throw new ArgumentNullException(nameof(model));
             }
-            if (model.Id == Guid.Empty)
-            {
-                model.Id = Guid.NewGuid();
-            }
-            Id = model.Id;
+            Id = model.Id == Guid.Empty 
+                ? Guid.NewGuid() 
+                : model.Id;
+
             SetFieldsByModel(model);
             ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
                 handler => _UpdateEvent += handler,

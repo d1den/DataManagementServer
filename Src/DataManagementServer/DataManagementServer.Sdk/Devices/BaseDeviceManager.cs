@@ -69,6 +69,7 @@ namespace DataManagementServer.Sdk.Devices
 
         public Guid CreateAndStart(BaseDeviceModel model)
         {
+            _ = model ?? throw new ArgumentNullException(nameof(model));
             var device = Create(model);
             _Devices.TryAdd(device.Id, device);
             device.Start();
@@ -84,6 +85,8 @@ namespace DataManagementServer.Sdk.Devices
 
         public void InitializeByConfig(string jsonDevicesConfig)
         {
+            _ = jsonDevicesConfig ?? throw new ArgumentNullException(nameof(jsonDevicesConfig));
+
             var deviceModels = JsonConvert.DeserializeObject<List<TModel>>(jsonDevicesConfig);
             foreach (var deviceModel in deviceModels)
             {
@@ -130,7 +133,7 @@ namespace DataManagementServer.Sdk.Devices
             return _Devices.TryRemove(id, out _);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (_IsDisposed)
             {
@@ -141,6 +144,7 @@ namespace DataManagementServer.Sdk.Devices
             {
                 device.Dispose();
             }
+            _Devices.Clear();
 
             _IsDisposed = true;
         }

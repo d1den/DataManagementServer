@@ -2,7 +2,7 @@
 
 namespace DataManagementServer.Common.Models
 {
-    public class BaseDeviceModel : BaseModel
+    public class BaseDeviceModel
     {
         /// <summary>
         /// Id устройства

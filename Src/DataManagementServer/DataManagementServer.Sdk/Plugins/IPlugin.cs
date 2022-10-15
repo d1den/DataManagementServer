@@ -6,17 +6,12 @@ namespace DataManagementServer.Sdk.Plugins
     /// <summary>
     /// Интерфейс плагина системы
     /// </summary>
-    public interface IPlugin
+    public interface IPlugin : IDisposable
     {
         /// <summary>
         /// Id плагина
         /// </summary>
         Guid Id { get; }
-
-        /// <summary>
-        /// Название плагина
-        /// </summary>
-        string Name { get; }
 
         /// <summary>
         /// Тип плагина

@@ -62,7 +62,7 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="parentId">Id родителской группы</param>
         /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Список моделей групп</returns>
-        List<GroupModel> RetrieveByParent(Guid parentId = default, bool allFields = true);
+        List<GroupModel> RetrieveByParent(Guid parentId = default, bool allFields = false);
 
         /// <summary>
         /// Получить все группы

@@ -105,15 +105,16 @@ namespace DataManagementServer.Core.Channels
             }
             private set
             {
-                if ((value == null
+                if (ValueType == TypeCode.Object
+                    || ((value == null
                     && (ValueType == TypeCode.Empty
                     || ValueType == TypeCode.DBNull
                     || ValueType == TypeCode.Object
                     || ValueType == TypeCode.String))
-                    || Type.GetTypeCode(value?.GetType()) == ValueType)
+                    || Type.GetTypeCode(value?.GetType()) == ValueType))
                 {
                     _Value = value;
-                    UpdateOn = DateTime.Now.ToUniversalTime();
+                    UpdateOn = DateTime.UtcNow;
                 }
                 else
                 {
@@ -162,11 +163,11 @@ namespace DataManagementServer.Core.Channels
             {
                 throw new ArgumentNullException(nameof(model));
             }
-            if (model.Id == Guid.Empty)
-            {
-                model.Id = Guid.NewGuid();
-            }
-            Id = model.Id;
+
+            Id = model.Id == Guid.Empty
+                ? Guid.NewGuid()
+                : model.Id;
+
             ValueType = TypeCode.Object;
             SetFieldsByModel(model);
             ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
@@ -251,6 +252,11 @@ namespace DataManagementServer.Core.Channels
                 throw new ArgumentNullException(nameof(model));
             }
 
+            if (model.Fields.ContainsKey(ChannelScheme.ValueType))
+            {
+                ValueType = model.ValueType ?? TypeCode.Object;
+            }
+
             foreach (var field in model.Fields)
             {
                 switch (field.Key)
@@ -264,9 +270,7 @@ namespace DataManagementServer.Core.Channels
                     case ChannelScheme.Description:
                         Description = model.Description;
                         continue;
-                    case ChannelScheme.ValueType:
-                        ValueType = model.ValueType ?? TypeCode.Object;
-                        continue;
+                    case ChannelScheme.ValueType: continue;
                     case ChannelScheme.Value:
                         Value = model.Value;
                         continue;
