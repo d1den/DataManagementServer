@@ -74,7 +74,7 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="groupId">Id группы</param>
         /// <param name="fields">Список полей для модели</param>
         /// <returns>Список моделей каналов</returns>
-        List<ChannelModel> RetrieveByGroup(Guid groupId = default, params string[] fields);
+        List<ChannelModel> RetrieveByGroup(Guid groupId, params string[] fields);
 
         /// <summary>
         /// Получить все каналы

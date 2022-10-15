@@ -9,7 +9,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 
-namespace DataManagementServer.Core.Services
+namespace DataManagementServer.Core.Services.Concrete
 {
     /// <summary>
     /// Сервис организации работы с каналами и группам
@@ -88,11 +88,13 @@ namespace DataManagementServer.Core.Services
             {
                 group.Dispose();
             }
+            _Groups.Clear();
 
             foreach(var channel in _Channels.Values)
             {
                 channel.Dispose();
             }
+            _Channels.Clear();
 
             _IsDisposed = true;
         }
@@ -193,28 +195,45 @@ namespace DataManagementServer.Core.Services
                 throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
             }
             baseGroup.Dispose();
+            var childGroups = _Groups
+                    .Select(pair => pair.Value)
+                    .Where(group => group.ParentId == id);
 
-            _GroupsChangeEvent?.Invoke(this,
-                new CollectionChangeEventArgs(id, CollectionChangeType.DeleteElement));
-
-            if (withChildren)
-            {
-                var deleteChannels = _Channels
+            var childChannels = _Channels
                     .Select(pair => pair.Value)
                     .Where(channel => channel.GroupId == id);
-                foreach (var channel in deleteChannels)
+
+            foreach (var group in childGroups)
+            {
+                if (withChildren)
+                {
+                    (this as IGroupService).Delete(group.Id, withChildren);
+                }
+                else
+                {
+                    var model = group.ToModel();
+                    model.ParentId = Guid.Empty;
+
+                    (this as IGroupService).Update(model);
+                }
+            }
+            foreach (var channel in childChannels)
+            {
+                if (withChildren)
                 {
                     (this as IChannelService).Delete(channel.Id);
                 }
-
-                var deleteGroups = _Groups
-                    .Select(pair => pair.Value)
-                    .Where(group => group.ParentId == id);
-                foreach (var group in deleteGroups)
+                else
                 {
-                    (this as IGroupService).Delete(group.Id);
+                    var model = channel.ToModel();
+                    model.GroupId = Guid.Empty;
+
+                    (this as IChannelService).Update(model);
                 }
             }
+
+            _GroupsChangeEvent?.Invoke(this,
+                new CollectionChangeEventArgs(id, CollectionChangeType.DeleteElement));
         }
         #endregion
 

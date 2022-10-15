@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Core.Channels;
-using DataManagementServer.Sdk.Channels;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace DataManagementServer.Core.Tests.Channels
 {
