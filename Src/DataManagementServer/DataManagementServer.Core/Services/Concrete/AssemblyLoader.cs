@@ -1,4 +1,5 @@
 ﻿using DataManagementServer.Core.Services.Abstract;
+using DataManagementServer.Core.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,11 +13,6 @@ namespace DataManagementServer.Core.Services.Concrete
     /// </summary>
     public class AssemblyLoader : IAssemblyLoader
     {
-        /// <summary>
-        /// Шаблон названия для файла .dll
-        /// </summary>
-        private const string _DllFileNamePattern = "*.dll";
-
         /// <summary>
         /// Путь к папке со сборками
         /// </summary>
@@ -43,7 +39,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 return new List<Assembly>();
             }
 
-            return Directory.EnumerateFiles(_AssembliesDirectoryPath, _DllFileNamePattern)
+            return Directory.EnumerateFiles(_AssembliesDirectoryPath, Constants.DllFileNamePattern)
                 .Select(file => Assembly.LoadFrom(file)).ToList();
         }
     }

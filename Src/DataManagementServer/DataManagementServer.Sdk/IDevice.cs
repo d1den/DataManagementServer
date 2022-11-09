@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace DataManagementServer.Sdk.Devices
+namespace DataManagementServer.Sdk
 {
     /// <summary>
     /// Интерфейс устройства плагина

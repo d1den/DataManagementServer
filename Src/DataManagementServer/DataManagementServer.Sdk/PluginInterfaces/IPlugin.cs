@@ -1,7 +1,6 @@
-﻿using DataManagementServer.Sdk.Devices;
-using System;
+﻿using System;
 
-namespace DataManagementServer.Sdk.Plugins
+namespace DataManagementServer.Sdk.PluginInterfaces
 {
     /// <summary>
     /// Интерфейс плагина системы
@@ -24,7 +23,7 @@ namespace DataManagementServer.Sdk.Plugins
         IDeviceManager DeviceManager { get; }
 
         /// <summary>
-        /// Создать плагин
+        /// Инициализация плагина
         /// </summary>
         /// <param name="serviceProvider">Провайдер сервисов ядра</param>
         void Initialize(IServiceProvider serviceProvider);

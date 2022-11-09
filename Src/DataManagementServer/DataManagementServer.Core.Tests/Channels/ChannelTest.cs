@@ -232,7 +232,7 @@ namespace DataManagementServer.Core.Tests.Channels
 
             // Act
             // Assert
-            Assert.ThrowsException<ArgumentException>(() => channel.GetValue<double>());
+            Assert.ThrowsException<InvalidCastException>(() => channel.GetValue<double>());
         }
 
         [TestMethod]

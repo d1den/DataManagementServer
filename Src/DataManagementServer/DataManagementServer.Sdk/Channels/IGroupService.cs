@@ -17,11 +17,6 @@ namespace DataManagementServer.Sdk.Channels
         int Count { get; }
 
         /// <summary>
-        /// Id корневой группы
-        /// </summary>
-        Guid RootId { get; }
-
-        /// <summary>
         /// Уведомитель об изменении коллекции
         /// </summary>
         IObservable<EventPattern<CollectionChangeEventArgs>> ObservableChange { get; }

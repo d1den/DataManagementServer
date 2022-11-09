@@ -375,7 +375,7 @@ namespace DataManagementServer.Core.Tests.Services
 
             //Act
             //Assert
-            Assert.ThrowsException<ArgumentException>(() => channelService.RetrieveValue<int>(channelId));
+            Assert.ThrowsException<InvalidCastException>(() => channelService.RetrieveValue<int>(channelId));
         }
 
         [TestMethod]

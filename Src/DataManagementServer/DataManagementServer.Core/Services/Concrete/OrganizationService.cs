@@ -1,5 +1,6 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Core.Channels;
+using DataManagementServer.Core.Resources;
 using DataManagementServer.Sdk.Channels;
 using System;
 using System.Collections.Concurrent;
@@ -16,16 +17,6 @@ namespace DataManagementServer.Core.Services.Concrete
     /// </summary>
     public class OrganizationService : IGroupService, IChannelService, IDisposable
     {
-        /// <summary>
-        /// Шаблон ошибки об отсуствии группы с запрашиваемым Id
-        /// </summary>
-        private const string _GroupNotExistErrorTemplate = "Group with id = {0} not exist!";
-
-        /// <summary>
-        /// Шаблон ошибки об отсуствии канала с запрашиваемым Id
-        /// </summary>
-        private const string _ChannelNotExistErrorTemplate = "Channel with id = {0} not exist!";
-
         /// <summary>
         /// Словарь групп
         /// </summary>
@@ -102,8 +93,6 @@ namespace DataManagementServer.Core.Services.Concrete
         #region Groups
         int IGroupService.Count => _Groups.Count;
 
-        Guid IGroupService.RootId => Guid.Empty;
-
         IObservable<EventPattern<CollectionChangeEventArgs>> IGroupService.ObservableChange => _GroupsObservable;
 
         #region Create
@@ -153,7 +142,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return group.ToModel(true);
             }
-            throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
         }
 
         List<GroupModel> IGroupService.RetrieveAll(bool allFields)
@@ -183,7 +172,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 return;
             }
 
-            throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, model.Id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, model.Id));
         }
         #endregion
 
@@ -192,9 +181,10 @@ namespace DataManagementServer.Core.Services.Concrete
         {
             if (!_Groups.Remove(id, out Group baseGroup))
             {
-                throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
+                throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
             }
             baseGroup.Dispose();
+
             var childGroups = _Groups
                     .Select(pair => pair.Value)
                     .Where(group => group.ParentId == id);
@@ -212,7 +202,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = group.ToModel();
-                    model.ParentId = Guid.Empty;
+                    model.ParentId = GroupModel.RootGroupId;
 
                     (this as IGroupService).Update(model);
                 }
@@ -226,7 +216,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = channel.ToModel();
-                    model.GroupId = Guid.Empty;
+                    model.GroupId = GroupModel.RootGroupId;
 
                     (this as IChannelService).Update(model);
                 }
@@ -243,7 +233,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return group.ObservableUpdate;
             }
-            throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
         }
 
         void IGroupService.SubscribeOnUpdate(Guid id, Action<UpdateEventArgs> handler, CancellationToken token)
@@ -259,7 +249,7 @@ namespace DataManagementServer.Core.Services.Concrete
                     .Subscribe(handler, token);
                 return;
             }
-            throw new KeyNotFoundException(string.Format(_GroupNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
         }
 
         void IGroupService.SubscribeOnCollectionChange(Action<CollectionChangeEventArgs> handler, CancellationToken token)
@@ -326,7 +316,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return channel.ToModel(allFields);
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         ChannelModel IChannelService.Retrieve(Guid id, params string[] fields)
@@ -335,7 +325,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return channel.ToModel(fields);
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         List<ChannelModel> IChannelService.RetrieveAll(bool allFields)
@@ -370,7 +360,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return channel.Value;
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         T IChannelService.RetrieveValue<T>(Guid id)
@@ -379,7 +369,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return channel.GetValue<T>();
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         bool IChannelService.TryRetrieveValue<T>(Guid id, out T value)
@@ -405,7 +395,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 channel.Update(model);
                 return;
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, model.Id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, model.Id));
         }
 
         void IChannelService.UpdateValue(Guid id, object value)
@@ -415,7 +405,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 channel.UpdateValue(value);
                 return;
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
         #endregion
 
@@ -424,12 +414,12 @@ namespace DataManagementServer.Core.Services.Concrete
         {
             if (!_Channels.TryRemove(id, out var channel))
             {
-                throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
             }
-            channel.Dispose();
-
             _ChannelsChangeEvent?.Invoke(this,
                 new CollectionChangeEventArgs(channel.Id, CollectionChangeType.DeleteElement));
+
+            channel.Dispose();
         }
         #endregion
 
@@ -439,7 +429,7 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 return channel.ObservableUpdate;
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         void IChannelService.SubscribeOnUpdate(Guid id, Action<UpdateEventArgs> handler, CancellationToken token)
@@ -455,7 +445,7 @@ namespace DataManagementServer.Core.Services.Concrete
                     .Subscribe(handler, token);
                 return;
             }
-            throw new KeyNotFoundException(string.Format(_ChannelNotExistErrorTemplate, id));
+            throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
         void IChannelService.SubscribeOnCollectionChange(Action<CollectionChangeEventArgs> handler, CancellationToken token)

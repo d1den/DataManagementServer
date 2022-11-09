@@ -1,7 +1,9 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Common.Schemes;
+using DataManagementServer.Core.Resources;
 using DataManagementServer.Sdk.Channels;
 using DataManagementServer.Sdk.Extensions;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Reactive;
@@ -15,19 +17,6 @@ namespace DataManagementServer.Core.Channels
     /// </summary>
     public class Channel : IDisposable
     {
-        #region Константы
-        /// <summary>
-        /// Шаблон ошибки о неверном типа значения
-        /// </summary>
-        private const string _ValueTypeErrorTemplate = "Value {0} has wrong type (Current type {1}).";
-
-        /// <summary>
-        /// Шаблон ошибки о несоответвии типов
-        /// </summary>
-        private const string _TypeErrorTemplate = "Type {0} does not match value type {1}";
-
-        #endregion
-
         #region Поля
         /// <summary>
         /// Поле тип данных значения
@@ -74,7 +63,7 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Название канала
         /// </summary>
-        private string Name { get; set; } = "New channel";
+        private string Name { get; set; } = Constants.DefaultChannelName;
 
         /// <summary>
         /// Описание канала
@@ -119,7 +108,7 @@ namespace DataManagementServer.Core.Channels
                 else
                 {
                     throw new ArgumentException(string
-                        .Format(_ValueTypeErrorTemplate, value, ValueType));
+                        .Format(ErrorMessages.ValueTypeError, value, ValueType));
                 }
             }
         }
@@ -299,23 +288,12 @@ namespace DataManagementServer.Core.Channels
             _Lock.EnterReadLock();
             try
             {
-                if (Nullable.GetUnderlyingType(typeof(T)) == null
-                    && typeof(T) != TypeExtensions.GetTypeByCode(ValueType))
-                {
-                    throw new ArgumentException(string
-                        .Format(_TypeErrorTemplate, typeof(T).Name, ValueType));
-                }
-                if (Value is T value)
-                {
-                    return value;
-                }
+                return (T)Value;
             }
             finally
             {
                 _Lock.ExitReadLock();
             }
-
-            return default;
         }
 
         /// <summary>

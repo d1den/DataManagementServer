@@ -1,5 +1,6 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Common.Schemes;
+using DataManagementServer.Core.Resources;
 using DataManagementServer.Sdk.Channels;
 using System;
 using System.Reactive;
@@ -26,7 +27,7 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Название группы
         /// </summary>
-        private string Name { get; set; } = "New group";
+        private string Name { get; set; } = Constants.DefaultGroupName;
 
         /// <summary>
         /// Событие обновления
