@@ -1,7 +1,7 @@
 ﻿using DataManagementServer.Common.Models;
 using System;
 
-namespace DataManagementServer.Sdk.Devices
+namespace DataManagementServer.Sdk.PluginInterfaces
 {
     /// <summary>
     /// Менеджер устройств
@@ -33,10 +33,23 @@ namespace DataManagementServer.Sdk.Devices
         void InitializeByConfig(string jsonDevicesConfig);
 
         /// <summary>
+        /// Обновить устройство по конфигу устройства
+        /// </summary>
+        /// <param name="jsonDeviceConfig">Json строка с конфигурацией</param>
+        void UpldateDeviceByConfig(string jsonDeviceConfig);
+
+        /// <summary>
         /// Получить строку с конфигурацией устройств
         /// </summary>
         /// <returns>Json строка с конфигурацией</returns>
         string GetConfig();
+
+        /// <summary>
+        /// Получить конфигурацию устройства
+        /// </summary>
+        /// <param name="id">Id устройства</param>
+        /// <returns>Json строка с конфигурацией</returns>
+        string GetDeviceConfig(Guid id);
 
         /// <summary>
         /// Попытка удаления устройства

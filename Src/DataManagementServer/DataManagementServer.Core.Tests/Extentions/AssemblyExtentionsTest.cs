@@ -1,7 +1,7 @@
 ﻿using DataManagementServer.Core.Extentions;
 using DataManagementServer.Core.Services.Abstract;
 using DataManagementServer.Core.Services.Concrete;
-using DataManagementServer.Sdk.Plugins;
+using DataManagementServer.Sdk.PluginInterfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

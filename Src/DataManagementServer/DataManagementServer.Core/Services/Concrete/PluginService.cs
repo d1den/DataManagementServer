@@ -1,7 +1,8 @@
 ﻿using DataManagementServer.Core.Extentions;
 using DataManagementServer.Core.Services.Abstract;
-using DataManagementServer.Sdk.Plugins;
+using DataManagementServer.Sdk.PluginInterfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,14 +15,19 @@ namespace DataManagementServer.Core.Services.Concrete
     public class PluginService : IPluginService
     {
         /// <summary>
-        /// Плагины
+        /// Словарь плагинов
         /// </summary>
-        private readonly Dictionary<Guid, IPlugin> _Plugins = new ();
+        private readonly ConcurrentDictionary<Guid, IPlugin> _Plugins = new ();
 
         /// <summary>
         /// Уже уничтожен?
         /// </summary>
         private bool _IsDisposed = false;
+
+        /// <summary>
+        /// Уже инициализирован?
+        /// </summary>
+        private bool IsInitialize = false;
 
         /// <summary>
         /// Провайдер сервисов
@@ -48,10 +54,11 @@ namespace DataManagementServer.Core.Services.Concrete
         /// <summary>
         /// Загрузить типы плагинов
         /// </summary>
-        /// <returns>Набор типов</returns>
+        /// <returns>Список типов плагинов</returns>
         private IEnumerable<Type> LoadPluginTypes()
         {
             var pluginTypes = new List<Type>();
+
             var assemlies = _AssemblyLoader.Load();
             foreach (var assembly in assemlies)
             {
@@ -61,20 +68,24 @@ namespace DataManagementServer.Core.Services.Concrete
             return pluginTypes;
         }
 
-        /// <summary>
-        /// Загрузить новые плагины
-        /// </summary
-        public void Load()
+        public void Initialize()
         {
+            if (IsInitialize)
+            {
+                return;
+            }
+
+            _Plugins.Clear();
             var plugins = LoadPluginTypes()
-                .Where(type => !_Plugins.Values.Any(plugin => plugin.GetType() == type))
                 .Select(type => Activator.CreateInstance(type) as IPlugin);
 
             foreach(var plugin in plugins)
             {
                 plugin.Initialize(_ServiceProvider);
-                _Plugins.Add(plugin.Id, plugin);
+                _Plugins.TryAdd(plugin.Id, plugin);
             }
+
+            IsInitialize = true;
         }
 
         public void Dispose()

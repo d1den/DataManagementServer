@@ -1,28 +1,17 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Sdk.Channels;
+using DataManagementServer.Sdk.Resources;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DataManagementServer.Sdk.Devices
+namespace DataManagementServer.Sdk
 {
     /// <summary>
     /// Базовый класс устройства
     /// </summary>
     public abstract class BaseDevice : IDevice
     {
-        #region Константы
-        /// <summary>
-        /// Базовое название устройства
-        /// </summary>
-        public const string BaseDeviceName = "NewDevice";
-
-        /// <summary>
-        /// Базовый период опроса = 250 мс
-        /// </summary>
-        public const int BasePollingPeriod = 250;
-        #endregion
-
         #region Свойства
         public Guid Id { get; }
 
@@ -58,12 +47,22 @@ namespace DataManagementServer.Sdk.Devices
         /// <summary>
         /// Объект для синхронизации потоков
         /// </summary>
-        protected readonly ReaderWriterLockSlim _Lock = new ();
+        protected readonly ReaderWriterLockSlim Lock = new();
+
+        /// <summary>
+        /// Объект синхронизации метода Dispose
+        /// </summary>
+        private readonly object _DisposeLock = new();
 
         /// <summary>
         /// Уже уничтожен?
         /// </summary>
-        protected bool _IsDisposed = false;
+        protected bool IsDisposed = false;
+
+        /// <summary>
+        /// Базовый период опроса = 250 мс
+        /// </summary>
+        public const int BasePollingPeriod = 250;
 
         /// <summary>
         /// Конструктор класса
@@ -75,9 +74,10 @@ namespace DataManagementServer.Sdk.Devices
         {
             GroupService = groupService ?? throw new ArgumentNullException(nameof(groupService));
             ChannelService = channelService ?? throw new ArgumentNullException(nameof(channelService));
+
             Id = Guid.NewGuid();
             Status = DeviceStatus.Created;
-            Name = BaseDeviceName;
+            Name = Constants.DefaultDeviceName;
             PollingPeriod = BasePollingPeriod;
         }
 
@@ -93,53 +93,76 @@ namespace DataManagementServer.Sdk.Devices
             GroupService = groupService ?? throw new ArgumentNullException(nameof(groupService));
             ChannelService = channelService ?? throw new ArgumentNullException(nameof(channelService));
             _ = model ?? throw new ArgumentNullException(nameof(model));
+
             Id = model.Id == default ? Guid.NewGuid() : model.Id;
-            Name = model.Name == default ? BaseDeviceName : model.Name;
+            Name = model.Name == default ? Constants.DefaultDeviceName : model.Name;
             Status = DeviceStatus.Created;
             PollingPeriod = model.PollingPeriod == default ? BasePollingPeriod : model.PollingPeriod;
         }
 
-        
-
         public void Start()
         {
-            if (Status == DeviceStatus.Runnig 
-                && _WorkTask != null && _WorkTask.Status == TaskStatus.Running)
+            Lock.EnterWriteLock();
+            try
             {
-                return;
+                if (Status == DeviceStatus.Runnig
+                    && _WorkTask?.Status == TaskStatus.Running)
+                {
+                    return;
+                }
+
+                _CancellationTokenSource = new CancellationTokenSource();
+                var token = _CancellationTokenSource.Token;
+                Status = DeviceStatus.Runnig;
+                _WorkTask = Task.Run(() => DoWork(token), token);
+                _WorkTask.ConfigureAwait(false);
             }
-            _CancellationTokenSource = new CancellationTokenSource();
-            var token = _CancellationTokenSource.Token;
-            Status = DeviceStatus.Runnig;
-            _WorkTask = Task.Run(() => DoWork(token), token);
-            _WorkTask.ConfigureAwait(false);
+            finally
+            {
+                Lock.ExitWriteLock();
+            }
         }
 
         public void Stop()
         {
+            Lock.EnterWriteLock();
             try
             {
                 if (Status == DeviceStatus.Stoped
-                    && _WorkTask == null 
-                    && (_WorkTask.Status == TaskStatus.Canceled || _WorkTask.Status == TaskStatus.RanToCompletion))
+                    && (_WorkTask == null || _WorkTask.Status == TaskStatus.Canceled
+                    || _WorkTask.Status == TaskStatus.RanToCompletion))
                 {
                     return;
                 }
+
                 _CancellationTokenSource?.Cancel();
                 _WorkTask?.Wait();
                 Status = DeviceStatus.Stoped;
             }
-            catch(AggregateException ex)
+            catch (AggregateException ex)
             {
                 ex.Handle(e => e is OperationCanceledException);
+            }
+            finally
+            {
+                Lock.ExitWriteLock();
             }
         }
 
         public Task StopAsync()
         {
-            _CancellationTokenSource?.Cancel();
-            Status = DeviceStatus.Stoped;
-            return _WorkTask;
+            Lock.EnterWriteLock();
+            try
+            {
+                _CancellationTokenSource?.Cancel();
+                Status = DeviceStatus.Stoped;
+
+                return _WorkTask;
+            }
+            finally
+            {
+                Lock.ExitWriteLock();
+            }
         }
 
         /// <summary>
@@ -183,14 +206,14 @@ namespace DataManagementServer.Sdk.Devices
 
         public virtual BaseDeviceModel ToModel()
         {
-            _Lock.EnterReadLock();
+            Lock.EnterReadLock();
             try
             {
                 return ToModelWithSync();
             }
             finally
             {
-                _Lock.ExitReadLock();
+                Lock.ExitReadLock();
             }
         }
 
@@ -202,14 +225,14 @@ namespace DataManagementServer.Sdk.Devices
 
         public virtual void Update(BaseDeviceModel model)
         {
-            _Lock.EnterWriteLock();
+            Lock.EnterWriteLock();
             try
             {
                 UpdateWithSync(model);
             }
             finally
             {
-                _Lock.ExitWriteLock();
+                Lock.ExitWriteLock();
             }
         }
 
@@ -221,24 +244,27 @@ namespace DataManagementServer.Sdk.Devices
 
         public virtual void Dispose()
         {
-            if (_IsDisposed)
+            lock (_DisposeLock)
             {
-                return;
-            }
+                if (IsDisposed)
+                {
+                    return;
+                }
 
-            if (_CancellationTokenSource != null)
-            {
-                _CancellationTokenSource.Dispose();
-                _CancellationTokenSource = null;
-            }
-            if (_WorkTask != null)
-            {
-                _WorkTask.Dispose();
-                _WorkTask = null;
-            }
-            _Lock.Dispose();
+                if (_CancellationTokenSource != null)
+                {
+                    _CancellationTokenSource.Dispose();
+                    _CancellationTokenSource = null;
+                }
+                if (_WorkTask != null)
+                {
+                    _WorkTask.Dispose();
+                    _WorkTask = null;
+                }
+                Lock.Dispose();
 
-            _IsDisposed = true;
+                IsDisposed = true;
+            }
         }
     }
 }

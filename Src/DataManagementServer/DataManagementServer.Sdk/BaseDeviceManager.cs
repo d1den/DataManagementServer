@@ -1,5 +1,7 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Sdk.Channels;
+using DataManagementServer.Sdk.PluginInterfaces;
+using DataManagementServer.Sdk.Resources;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -7,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DataManagementServer.Sdk.Devices
+namespace DataManagementServer.Sdk
 {
     /// <summary>
     /// Базовый менеджер устройств
@@ -33,7 +35,7 @@ namespace DataManagementServer.Sdk.Devices
         /// <summary>
         /// Устройства
         /// </summary>
-        protected readonly ConcurrentDictionary<Guid, TDevice> _Devices = new ();
+        protected readonly ConcurrentDictionary<Guid, TDevice> _Devices = new();
 
         /// <summary>
         /// Уже уничтожен?
@@ -69,7 +71,6 @@ namespace DataManagementServer.Sdk.Devices
 
         public Guid CreateAndStart(BaseDeviceModel model)
         {
-            _ = model ?? throw new ArgumentNullException(nameof(model));
             var device = Create(model);
             _Devices.TryAdd(device.Id, device);
             device.Start();
@@ -80,7 +81,19 @@ namespace DataManagementServer.Sdk.Devices
         public string GetConfig()
         {
             var deviceModels = _Devices.Values.Select(d => d.ToModel()).ToList();
+
             return JsonConvert.SerializeObject(deviceModels);
+        }
+
+        public string GetDeviceConfig(Guid id)
+        {
+            if (!_Devices.TryGetValue(id, out TDevice device))
+            {
+                throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, id));
+            }
+            var model = device.ToModel();
+
+            return JsonConvert.SerializeObject(model);
         }
 
         public void InitializeByConfig(string jsonDevicesConfig)
@@ -94,20 +107,42 @@ namespace DataManagementServer.Sdk.Devices
             }
         }
 
+        public void UpldateDeviceByConfig(string jsonDeviceConfig)
+        {
+            _ = jsonDeviceConfig ?? throw new ArgumentNullException(nameof(jsonDeviceConfig));
+
+            var model = JsonConvert.DeserializeObject<TModel>(jsonDeviceConfig);
+
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            if (!_Devices.TryGetValue(model.Id, out var device))
+            {
+                throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, model.Id));
+            }
+
+            device.Update(model);
+        }
+
         public void Start(Guid id)
         {
-            if (_Devices.TryGetValue(id, out TDevice device))
+            if (!_Devices.TryGetValue(id, out TDevice device))
             {
-                device.Start();
+                throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, id));
             }
+
+            device.Start();
         }
 
         public void Stop(Guid id)
         {
-            if (_Devices.TryGetValue(id, out TDevice device))
+            if (!_Devices.TryGetValue(id, out TDevice device))
             {
-                device.Stop();
+                throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, id));
             }
+
+            device.Stop();
         }
 
         public void StopAll()
@@ -119,18 +154,24 @@ namespace DataManagementServer.Sdk.Devices
         public bool TryRetrieve(Guid id, out BaseDeviceModel model)
         {
             model = default;
-            if (_Devices.TryGetValue(id, out TDevice device))
+            if (!_Devices.TryGetValue(id, out TDevice device))
             {
-                model = device.ToModel() as TModel;
-                return true;
+                return false;
             }
 
-            return false;
+            model = device.ToModel() as TModel;
+            return true;
         }
 
         public bool TryRemove(Guid id)
         {
-            return _Devices.TryRemove(id, out _);
+            if (!_Devices.TryRemove(id, out var device))
+            {
+                return false;
+            }
+
+            device.Dispose();
+            return true;
         }
 
         public virtual void Dispose()
@@ -140,7 +181,7 @@ namespace DataManagementServer.Sdk.Devices
                 return;
             }
 
-            foreach(var device in _Devices.Values)
+            foreach (var device in _Devices.Values)
             {
                 device.Dispose();
             }
