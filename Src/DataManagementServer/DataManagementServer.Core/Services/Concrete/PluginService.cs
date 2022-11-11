@@ -88,6 +88,68 @@ namespace DataManagementServer.Core.Services.Concrete
             IsInitialize = true;
         }
 
+        public bool TryRetrieve(Guid id, out IPlugin plugin)
+        {
+            return _Plugins.TryGetValue(id, out plugin);
+        }
+
+        public bool TryRetrieve(Type pluginType, out IPlugin plugin)
+        {
+            _ = pluginType ?? throw new ArgumentNullException(nameof(pluginType));
+
+            plugin =  _Plugins.Values
+                .FirstOrDefault(p => p.GetType() == pluginType);
+
+            return plugin != null;
+        }
+
+        public bool TryRetrieve(string pluginTypeName, out IPlugin plugin)
+        {
+            if (string.IsNullOrWhiteSpace(pluginTypeName))
+            {
+                throw new ArgumentNullException(nameof(pluginTypeName));
+            }
+
+            plugin = _Plugins.Values
+                .FirstOrDefault(p => p.GetType().Name == pluginTypeName);
+
+            return plugin != null;
+        }
+
+        public IPlugin GetPluginOrDefault(Guid id)
+        {
+            if (_Plugins.TryGetValue(id, out var plugin))
+            {
+                return plugin;
+            }
+
+            return null;
+        }
+
+        public IPlugin GetPluginOrDefault(Type pluginType)
+        {
+            _ = pluginType ?? throw new ArgumentNullException(nameof(pluginType));
+
+            return _Plugins.Values
+                .FirstOrDefault(p => p.GetType() == pluginType);
+        }
+
+        public IPlugin GetPluginOrDefault(string pluginTypeName)
+        {
+            if (string.IsNullOrWhiteSpace(pluginTypeName))
+            {
+                throw new ArgumentNullException(nameof(pluginTypeName));
+            }
+
+            return _Plugins.Values
+                .FirstOrDefault(p => p.GetType().Name == pluginTypeName); ;
+        }
+
+        public List<IPlugin> RetrieveAll()
+        {
+            return _Plugins.Values.ToList();
+        }
+
         public void Dispose()
         {
             if (_IsDisposed)

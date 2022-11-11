@@ -9,11 +9,6 @@ namespace DataManagementServer.Common.Models
     public class FieldValueCollection : Dictionary<string, object>, ICloneable
     {
         /// <summary>
-        /// Ошибка неправильного типа значения поля
-        /// </summary>
-        private const string _FieldValueTypeError = "Field value has another type";
-
-        /// <summary>
         /// Попытка получения типизированного значения поля
         /// </summary>
         /// <typeparam name="T">Тип значения поля</typeparam>
@@ -30,23 +25,16 @@ namespace DataManagementServer.Common.Models
             fieldValue = default;
             try
             {
-                if (TryGetValue(fieldName, out object value))
+                if (TryGetValue(fieldName, out object value)
+                    && (value is T
+                        || Nullable.GetUnderlyingType(typeof(T)) != null))
                 {
-                    if (value is T 
-                        || Nullable.GetUnderlyingType(typeof(T)) != null)
-                    {
-                        fieldValue = (T)value;
-                        return true;
-                    }
-                    else if (value is null
-                        && Nullable.GetUnderlyingType(typeof(T)) != null)
-                    {
-                        return true;
-                    }
+                    fieldValue = (T)value;
+                    return true;
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -67,20 +55,8 @@ namespace DataManagementServer.Common.Models
                 throw new ArgumentNullException(nameof(fieldName));
             }
             var value = this[fieldName];
-            if (value is T 
-                || Nullable.GetUnderlyingType(typeof(T)) != null)
-            {
-                return (T)value;
-            }
-            else if (value is null
-                && Nullable.GetUnderlyingType(typeof(T)) != null)
-            {
-                return default(T);
-            }
-            else
-            {
-                throw new Exception(_FieldValueTypeError);
-            }
+
+            return (T)value;
         }
 
         /// <summary>

@@ -52,6 +52,12 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         string GetDeviceConfig(Guid id);
 
         /// <summary>
+        /// Обновить устройство на основе модели устройства
+        /// </summary>
+        /// <param name="model">Модель устройства</param>
+        void UpdateDevice(BaseDeviceModel model);
+
+        /// <summary>
         /// Попытка удаления устройства
         /// </summary>
         /// <param name="id">Id устройства</param>

@@ -112,16 +112,17 @@ namespace DataManagementServer.Sdk
             _ = jsonDeviceConfig ?? throw new ArgumentNullException(nameof(jsonDeviceConfig));
 
             var model = JsonConvert.DeserializeObject<TModel>(jsonDeviceConfig);
+            UpdateDevice(model);
+        }
 
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
+        public void UpdateDevice(BaseDeviceModel model)
+        {
+            _ = model ?? throw new ArgumentNullException(nameof(model));
+
             if (!_Devices.TryGetValue(model.Id, out var device))
             {
                 throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, model.Id));
             }
-
             device.Update(model);
         }
 
