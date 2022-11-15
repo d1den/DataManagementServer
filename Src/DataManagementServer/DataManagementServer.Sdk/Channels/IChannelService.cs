@@ -66,7 +66,7 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="groupId">Id группы</param>
         /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Список моделей каналов</returns>
-        List<ChannelModel> RetrieveByGroup(Guid groupId, bool allFields);
+        IList<ChannelModel> RetrieveByGroup(Guid groupId, bool allFields);
 
         /// <summary>
         /// Получить набор каналов по группе
@@ -74,21 +74,21 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="groupId">Id группы</param>
         /// <param name="fields">Список полей для модели</param>
         /// <returns>Список моделей каналов</returns>
-        List<ChannelModel> RetrieveByGroup(Guid groupId, params string[] fields);
+        IList<ChannelModel> RetrieveByGroup(Guid groupId, params string[] fields);
 
         /// <summary>
         /// Получить все каналы
         /// </summary>
         /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Список моделей каналов</returns>
-        List<ChannelModel> RetrieveAll(bool allFields);
+        IList<ChannelModel> RetrieveAll(bool allFields);
 
         /// <summary>
         /// Получить все каналы
         /// </summary>
         /// <param name="fields">Список полей для модели</param>
         /// <returns>Список моделей каналов</returns>
-        List<ChannelModel> RetrieveAll(params string[] fields);
+        IList<ChannelModel> RetrieveAll(params string[] fields);
 
         /// <summary>
         /// Получить значение канала

@@ -59,7 +59,7 @@ namespace DataManagementServer.Core.Services.Concrete
         {
             var pluginTypes = new List<Type>();
 
-            var assemlies = _AssemblyLoader.Load();
+            var assemlies = _AssemblyLoader.GetAssemblies();
             foreach (var assembly in assemlies)
             {
                 pluginTypes.AddRange(assembly.GetTypesByInterface(typeof(IPlugin)));

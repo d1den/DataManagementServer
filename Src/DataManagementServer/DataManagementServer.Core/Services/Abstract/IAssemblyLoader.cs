@@ -13,5 +13,11 @@ namespace DataManagementServer.Core.Services.Abstract
         /// </summary>
         /// <returns>Список сборок</returns>
         IList<Assembly> Load();
+
+        /// <summary>
+        /// Получить сборки
+        /// </summary>
+        /// <returns>Список сборок</returns>
+        IList<Assembly> GetAssemblies();
     }
 }
