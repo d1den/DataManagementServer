@@ -13,7 +13,8 @@ namespace DataManagementServer.Common.Models
         /// Id корневой группы
         /// </summary>
         [JsonIgnore]
-        public static Guid RootGroupId = Guid.Empty;
+        [System.Text.Json.Serialization.JsonIgnore]
+        public static readonly Guid RootGroupId = Guid.Empty;
 
         /// <summary>
         /// Id группы
@@ -24,6 +25,7 @@ namespace DataManagementServer.Common.Models
         /// Id родительской группы
         /// </summary>
         [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Guid? ParentId
         {
             get
@@ -47,6 +49,7 @@ namespace DataManagementServer.Common.Models
         /// Название группы
         /// </summary>
         [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string Name
         {
             get

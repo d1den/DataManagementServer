@@ -57,14 +57,14 @@ namespace DataManagementServer.Sdk.Channels
         /// <param name="parentId">Id родителской группы</param>
         /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Список моделей групп</returns>
-        List<GroupModel> RetrieveByParent(Guid parentId = default, bool allFields = false);
+        IList<GroupModel> RetrieveByParent(Guid parentId = default, bool allFields = false);
 
         /// <summary>
         /// Получить все группы
         /// </summary>
         /// <param name="allFields">Получить все поля или только Id</param>
         /// <returns>Список моделей групп</returns>
-        List<GroupModel> RetrieveAll(bool allFields = false);
+        IList<GroupModel> RetrieveAll(bool allFields = false);
         #endregion
 
         #region Update

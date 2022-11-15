@@ -18,6 +18,7 @@ namespace DataManagementServer.Common.Models
         /// </summary>
         /// <param name="fieldName">Название поля</param>
         /// <returns>Значение поля</returns>
+        [System.Text.Json.Serialization.JsonIgnore]
         [JsonIgnore]
         public object this[string fieldName]
         {

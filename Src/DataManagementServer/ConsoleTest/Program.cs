@@ -12,14 +12,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-var channel = new Channel(new ChannelModel()
-{
-    ValueType = TypeCode.String,
-    Value = "Hello World!"
-});
-var sub = channel.ObservableUpdate.Subscribe(s => Console.WriteLine(s.EventArgs.UpdatedFields.FirstOrDefault().Value));
-channel.UpdateValue("New string!");
-sub.Dispose();
-
-channel.UpdateValue("dawdawdw");
+PrintTypeName<BaseModel>();
 Console.ReadLine();
+
+static void PrintTypeName<T>()
+{
+    var type = typeof(T);
+    Console.WriteLine(type?.FullName);
+}
