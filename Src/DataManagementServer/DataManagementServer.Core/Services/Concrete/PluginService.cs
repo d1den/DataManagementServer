@@ -165,7 +165,7 @@ namespace DataManagementServer.Core.Services.Concrete
             return plugin;
         }
 
-        public IList<IPlugin> RetrieveAll()
+        public List<IPlugin> RetrieveAll()
         {
             return _Plugins.Values.ToList();
         }

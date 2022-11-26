@@ -64,6 +64,6 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// Получить все плагины
         /// </summary>
         /// <returns>Список плагинов</returns>
-        IList<IPlugin> RetrieveAll();
+        List<IPlugin> RetrieveAll();
     }
 }

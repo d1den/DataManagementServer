@@ -174,7 +174,7 @@ namespace DataManagementServer.Sdk
             return device.ToModel();
         }
 
-        public IList<BaseDeviceModel> GetAll()
+        public List<BaseDeviceModel> GetAll()
         {
             return _Devices.Values.Select(device => device.ToModel())
                 .ToList();

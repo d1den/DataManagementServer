@@ -146,17 +146,17 @@ namespace DataManagementServer.Core.Services.Concrete
             throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
         }
 
-        IList<GroupModel> IGroupService.RetrieveAll(bool allFields)
+        List<GroupModel> IGroupService.RetrieveAll(bool allFields)
         {
             return _Groups
-                .Select(pair => pair.Value.ToModel(allFields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(allFields)).ToList();
         }
 
-        IList<GroupModel> IGroupService.RetrieveByParent(Guid parentId, bool allFields)
+        List<GroupModel> IGroupService.RetrieveByParent(Guid parentId, bool allFields)
         {
             return _Groups
                 .Where(pair => pair.Value.ParentId == parentId)
-                .Select(pair => pair.Value.ToModel(allFields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(allFields)).ToList();
         }
         #endregion
 
@@ -329,30 +329,30 @@ namespace DataManagementServer.Core.Services.Concrete
             throw new KeyNotFoundException(string.Format(ErrorMessages.ChannelNotExistError, id));
         }
 
-        IList<ChannelModel> IChannelService.RetrieveAll(bool allFields)
+        List<ChannelModel> IChannelService.RetrieveAll(bool allFields)
         {
             return _Channels
-                .Select(pair => pair.Value.ToModel(allFields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(allFields)).ToList();
         }
 
-        IList<ChannelModel> IChannelService.RetrieveAll(params string[] fields)
+        List<ChannelModel> IChannelService.RetrieveAll(params string[] fields)
         {
             return _Channels
-                .Select(pair => pair.Value.ToModel(fields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(fields)).ToList();
         }
 
-        IList<ChannelModel> IChannelService.RetrieveByGroup(Guid groupId, bool allFields)
+        List<ChannelModel> IChannelService.RetrieveByGroup(Guid groupId, bool allFields)
         {
             return _Channels
                 .Where(pair => pair.Value.GroupId == groupId)
-                .Select(pair => pair.Value.ToModel(allFields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(allFields)).ToList();
         }
 
-        IList<ChannelModel> IChannelService.RetrieveByGroup(Guid groupId, params string[] fields)
+        List<ChannelModel> IChannelService.RetrieveByGroup(Guid groupId, params string[] fields)
         {
             return _Channels
                 .Where(pair => pair.Value.GroupId == groupId)
-                .Select(pair => pair.Value.ToModel(fields)).ToImmutableList();
+                .Select(pair => pair.Value.ToModel(fields)).ToList();
         }
 
         object IChannelService.RetrieveValue(Guid id)

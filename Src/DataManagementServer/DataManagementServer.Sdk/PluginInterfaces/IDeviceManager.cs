@@ -84,7 +84,7 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// Получение всех устройств
         /// </summary>
         /// <returns>Список моделей всех устройств</returns>
-        IList<BaseDeviceModel> GetAll();
+        List<BaseDeviceModel> GetAll();
 
         /// <summary>
         /// Запустить устройство
