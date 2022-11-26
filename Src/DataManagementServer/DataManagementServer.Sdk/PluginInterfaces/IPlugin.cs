@@ -13,6 +13,11 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         Guid Id { get; }
 
         /// <summary>
+        /// Название плагина
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Тип плагина
         /// </summary>
         PluginType Type { get; }

@@ -79,6 +79,15 @@ namespace DataManagementServer.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugin &apos;{0}&apos; doesn`t exist..
+        /// </summary>
+        internal static string PluginNotExistError {
+            get {
+                return ResourceManager.GetString("PluginNotExistError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value {0} has wrong type (Current type {1}).
         /// </summary>
         internal static string ValueTypeError {

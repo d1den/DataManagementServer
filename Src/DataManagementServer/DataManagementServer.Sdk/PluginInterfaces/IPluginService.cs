@@ -20,7 +20,7 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// <param name="id">Id плагина</param>
         /// <param name="plugin">Возвращаем плагин</param>
         /// <returns>Удалось получить?</returns>
-        bool TryRetrieve(Guid id, out IPlugin plugin);
+        bool TryGetPlugin(Guid id, out IPlugin plugin);
 
         /// <summary>
         /// Получить плагин
@@ -28,7 +28,7 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// <param name="pluginType">Тип плагина</param>
         /// <param name="plugin">Возвращаем плагин</param>
         /// <returns>Удалось получить?</returns>
-        bool TryRetrieve(Type pluginType, out IPlugin plugin);
+        bool TryGetPlugin(Type pluginType, out IPlugin plugin);
 
         /// <summary>
         /// Получить плагин
@@ -36,14 +36,14 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// <param name="pluginTypeName">Имя типа плагина</param>
         /// <param name="plugin">Возвращаем плагин</param>
         /// <returns>Удалось получить?</returns>
-        bool TryRetrieve(string pluginTypeName, out IPlugin plugin);
+        bool TryGetPlugin(string pluginTypeName, out IPlugin plugin);
 
         /// <summary>
         /// Получить плагин или null
         /// </summary>
         /// <param name="id">Id плагина</param>
         /// <returns>Плагин</returns>
-        IPlugin GetPluginOrDefault(Guid id);
+        IPlugin GetPlugin(Guid id);
 
 
         /// <summary>
@@ -51,14 +51,14 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// </summary>
         /// <param name="pluginType">Тип плагина</param>
         /// <returns>Плагин</returns>
-        IPlugin GetPluginOrDefault(Type pluginType);
+        IPlugin GetPlugin(Type pluginType);
 
         /// <summary>
         /// Получить плагин или null
         /// </summary>
         /// <param name="pluginTypeName">Название типа плагина</param>
         /// <returns>Плагин</returns>
-        IPlugin GetPluginOrDefault(string pluginTypeName);
+        IPlugin GetPlugin(string pluginTypeName);
 
         /// <summary>
         /// Получить все плагины

@@ -209,7 +209,7 @@ namespace DataManagementServer.Sdk
             Lock.EnterReadLock();
             try
             {
-                return ToModelWithSync();
+                return UnsafeToModel();
             }
             finally
             {
@@ -218,17 +218,18 @@ namespace DataManagementServer.Sdk
         }
 
         /// <summary>
-        /// Получение модели с синхронизацией доступа
+        /// Получение модели без использования синхронизации
         /// </summary>
+        /// <remarks>Данный метод вызывается в методе-обёртке, использующий синхронизацию потоков</remarks>
         /// <returns>Модель устройства</returns>
-        protected abstract BaseDeviceModel ToModelWithSync();
+        protected abstract BaseDeviceModel UnsafeToModel();
 
         public virtual void Update(BaseDeviceModel model)
         {
             Lock.EnterWriteLock();
             try
             {
-                UpdateWithSync(model);
+                UnsafeUpdate(model);
             }
             finally
             {
@@ -237,10 +238,11 @@ namespace DataManagementServer.Sdk
         }
 
         /// <summary>
-        /// Обновление устройства с синхронизацией доступа
+        /// Обновление устройства без использования синхронизации
         /// </summary>
+        /// <remarks>Данный метод вызывается в методе-обёртке, использующий синхронизацию потоков</remarks>
         /// <param name="model">Модель устройства</param>
-        protected abstract void UpdateWithSync(BaseDeviceModel model);
+        protected abstract void UnsafeUpdate(BaseDeviceModel model);
 
         public virtual void Dispose()
         {
