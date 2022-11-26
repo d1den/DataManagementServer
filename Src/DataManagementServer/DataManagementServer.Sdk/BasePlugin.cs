@@ -76,6 +76,8 @@ namespace DataManagementServer.Sdk
                 IsInitialize = true;
             }
         }
+        
+        public abstract string Name { get; }
 
         public abstract PluginType Type { get; }
 

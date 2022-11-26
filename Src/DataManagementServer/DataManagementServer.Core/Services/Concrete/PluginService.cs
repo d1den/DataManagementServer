@@ -1,4 +1,5 @@
 ﻿using DataManagementServer.Core.Extentions;
+using DataManagementServer.Core.Resources;
 using DataManagementServer.Core.Services.Abstract;
 using DataManagementServer.Sdk.PluginInterfaces;
 using System;
@@ -28,6 +29,11 @@ namespace DataManagementServer.Core.Services.Concrete
         /// Уже инициализирован?
         /// </summary>
         private bool IsInitialize = false;
+
+        /// <summary>
+        /// Объект для синхронизации потоков
+        /// </summary>
+        private readonly object _Lock = new ();
 
         /// <summary>
         /// Провайдер сервисов
@@ -70,30 +76,32 @@ namespace DataManagementServer.Core.Services.Concrete
 
         public void Initialize()
         {
-            if (IsInitialize)
+            lock (_Lock)
             {
-                return;
+                if (IsInitialize)
+                {
+                    return;
+                }
+
+                var plugins = LoadPluginTypes()
+                    .Select(type => Activator.CreateInstance(type) as IPlugin);
+
+                foreach (var plugin in plugins)
+                {
+                    plugin.Initialize(_ServiceProvider);
+                    _Plugins.TryAdd(plugin.Id, plugin);
+                }
+
+                IsInitialize = true;
             }
-
-            _Plugins.Clear();
-            var plugins = LoadPluginTypes()
-                .Select(type => Activator.CreateInstance(type) as IPlugin);
-
-            foreach(var plugin in plugins)
-            {
-                plugin.Initialize(_ServiceProvider);
-                _Plugins.TryAdd(plugin.Id, plugin);
-            }
-
-            IsInitialize = true;
         }
 
-        public bool TryRetrieve(Guid id, out IPlugin plugin)
+        public bool TryGetPlugin(Guid id, out IPlugin plugin)
         {
             return _Plugins.TryGetValue(id, out plugin);
         }
 
-        public bool TryRetrieve(Type pluginType, out IPlugin plugin)
+        public bool TryGetPlugin(Type pluginType, out IPlugin plugin)
         {
             _ = pluginType ?? throw new ArgumentNullException(nameof(pluginType));
 
@@ -103,7 +111,7 @@ namespace DataManagementServer.Core.Services.Concrete
             return plugin != null;
         }
 
-        public bool TryRetrieve(string pluginTypeName, out IPlugin plugin)
+        public bool TryGetPlugin(string pluginTypeName, out IPlugin plugin)
         {
             if (string.IsNullOrWhiteSpace(pluginTypeName))
             {
@@ -116,54 +124,69 @@ namespace DataManagementServer.Core.Services.Concrete
             return plugin != null;
         }
 
-        public IPlugin GetPluginOrDefault(Guid id)
+        public IPlugin GetPlugin(Guid id)
         {
-            if (_Plugins.TryGetValue(id, out var plugin))
+            if (!_Plugins.TryGetValue(id, out var plugin))
             {
-                return plugin;
+                throw new KeyNotFoundException(string.Format(ErrorMessages.PluginNotExistError, id));
             }
 
-            return null;
+            return plugin;
         }
 
-        public IPlugin GetPluginOrDefault(Type pluginType)
+        public IPlugin GetPlugin(Type pluginType)
         {
             _ = pluginType ?? throw new ArgumentNullException(nameof(pluginType));
 
-            return _Plugins.Values
+            var plugin = _Plugins.Values
                 .FirstOrDefault(p => p.GetType() == pluginType);
+
+            if (plugin == null)
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.PluginNotExistError, pluginType.Name));
+            }
+            return plugin;
         }
 
-        public IPlugin GetPluginOrDefault(string pluginTypeName)
+        public IPlugin GetPlugin(string pluginTypeName)
         {
             if (string.IsNullOrWhiteSpace(pluginTypeName))
             {
                 throw new ArgumentNullException(nameof(pluginTypeName));
             }
 
-            return _Plugins.Values
-                .FirstOrDefault(p => p.GetType().Name == pluginTypeName); ;
+            var plugin = _Plugins.Values
+                .FirstOrDefault(p => p.GetType().Name == pluginTypeName);
+
+            if (plugin == null)
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.PluginNotExistError, pluginTypeName));
+            }
+            return plugin;
         }
 
-        public List<IPlugin> RetrieveAll()
+        public IList<IPlugin> RetrieveAll()
         {
             return _Plugins.Values.ToList();
         }
 
         public void Dispose()
         {
-            if (_IsDisposed)
+            lock (_Lock)
             {
-                return;
-            }
+                if (_IsDisposed)
+                {
+                    return;
+                }
 
-            foreach(var plugin in _Plugins.Values)
-            {
-                plugin.Dispose();
-            }
-            _Plugins.Clear();
+                foreach (var plugin in _Plugins.Values)
+                {
+                    plugin.Dispose();
+                }
+                _Plugins.Clear();
 
-            _IsDisposed = true;
+                _IsDisposed = true;
+            }
         }
     }
 }

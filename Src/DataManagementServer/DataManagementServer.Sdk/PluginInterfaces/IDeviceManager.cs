@@ -1,5 +1,6 @@
 ﻿using DataManagementServer.Common.Models;
 using System;
+using System.Collections.Generic;
 
 namespace DataManagementServer.Sdk.PluginInterfaces
 {
@@ -62,7 +63,7 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// </summary>
         /// <param name="id">Id устройства</param>
         /// <returns>Результат удаления</returns>
-        bool TryRemove(Guid id);
+        bool TryRemoveDevice(Guid id);
 
         /// <summary>
         /// Попытка получения устройства
@@ -70,19 +71,32 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// <param name="id">Id устройства</param>
         /// <param name="model">Модель устройства</param>
         /// <returns>Результат получения</returns>
-        bool TryRetrieve(Guid id, out BaseDeviceModel model);
+        bool TryGetDevice(Guid id, out BaseDeviceModel model);
+
+        /// <summary>
+        /// Получение устройства
+        /// </summary>
+        /// <param name="id">Id устройства</param>
+        /// <returns>Базовая модель устройства</returns>
+        BaseDeviceModel GeDevice(Guid id);
+
+        /// <summary>
+        /// Получение всех устройств
+        /// </summary>
+        /// <returns>Список моделей всех устройств</returns>
+        IList<BaseDeviceModel> GetAll();
 
         /// <summary>
         /// Запустить устройство
         /// </summary>
         /// <param name="id">Id устройства</param>
-        void Start(Guid id);
+        void StartDevice(Guid id);
 
         /// <summary>
         /// Остановить устройство
         /// </summary>
         /// <param name="id">Id устройства</param>
-        void Stop(Guid id);
+        void StopDevice(Guid id);
 
         /// <summary>
         /// Остановить все устройства

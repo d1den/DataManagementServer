@@ -126,7 +126,7 @@ namespace DataManagementServer.Sdk
             device.Update(model);
         }
 
-        public void Start(Guid id)
+        public void StartDevice(Guid id)
         {
             if (!_Devices.TryGetValue(id, out TDevice device))
             {
@@ -136,7 +136,7 @@ namespace DataManagementServer.Sdk
             device.Start();
         }
 
-        public void Stop(Guid id)
+        public void StopDevice(Guid id)
         {
             if (!_Devices.TryGetValue(id, out TDevice device))
             {
@@ -152,7 +152,7 @@ namespace DataManagementServer.Sdk
             Task.WaitAll(tasks);
         }
 
-        public bool TryRetrieve(Guid id, out BaseDeviceModel model)
+        public bool TryGetDevice(Guid id, out BaseDeviceModel model)
         {
             model = default;
             if (!_Devices.TryGetValue(id, out TDevice device))
@@ -160,11 +160,27 @@ namespace DataManagementServer.Sdk
                 return false;
             }
 
-            model = device.ToModel() as TModel;
+            model = device.ToModel();
             return true;
         }
 
-        public bool TryRemove(Guid id)
+        public BaseDeviceModel GeDevice(Guid id)
+        {
+            if (!_Devices.TryGetValue(id, out TDevice device))
+            {
+                throw new KeyNotFoundException(string.Format(Constants.DeviceNotExistError, id));
+            }
+
+            return device.ToModel();
+        }
+
+        public IList<BaseDeviceModel> GetAll()
+        {
+            return _Devices.Values.Select(device => device.ToModel())
+                .ToList();
+        }
+
+        public bool TryRemoveDevice(Guid id)
         {
             if (!_Devices.TryRemove(id, out var device))
             {
