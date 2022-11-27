@@ -19,7 +19,7 @@ namespace DataManagementServer.AppServer.Utils
 
             return value switch
             {
-                Guid guid => guid != Guid.Empty,
+                Guid guid => !Guid.Empty.Equals(guid),
                 _ => true,
             };
         }

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataManagementServer.Core\DataManagementServer.Core.csproj" />
+    <ProjectReference Include="..\Pagination\DataManagementServer.Pagination.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,19 +12,8 @@ namespace DataManagementServer.Common.Models
         /// <summary>
         /// Поля канала
         /// </summary>
-        
-        private FieldValueCollection _Fields { get; set; } = new();
-        public FieldValueCollection Fields
-        {
-            get { return _Fields; }
-            set
-            {
-                foreach (var field in value)
-                {
-                    _Fields[field.Key] = field.Value;
-                }
-            }
-        }
+
+        public FieldValueCollection Fields { get; set; } = new();
 
         /// <summary>
         /// Свойство доступа к поля модели

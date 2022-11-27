@@ -3,6 +3,8 @@ using DataManagementServer.AppServer.Utils;
 using DataManagementServer.Common.Models;
 using DataManagementServer.Sdk.Channels;
 using Microsoft.AspNetCore.Mvc;
+using Pagination;
+using Pagination.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace DataManagementServer.AppServer.Controllers
     /// <summary>
     /// Контроллер каналов
     /// </summary>
-    public class ChannelController : ControllerBase
+    public class ChannelController : CommonController
     {
         /// <summary>
         /// Сервис каналов
@@ -74,7 +76,9 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ChannelModel> GetChannelFields([FromQuery(Name = "channelId")][NotEmpty] Guid channelId, [FromQuery(Name = "fields")] IList<string> fields)
+        public ActionResult<ChannelModel> GetChannelFields(
+            [FromQuery(Name = "channelId")][NotEmpty] Guid channelId,
+            [FromQuery(Name = "fields")] IList<string> fields)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
@@ -84,70 +88,50 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IList<ChannelModel>> RetrieveByGroup([FromQuery(Name = "groupId")][NotEmpty] Guid groupId)
+        public ActionResult<Page<ChannelModel>> GetChannelByGroup(
+            [FromQuery(Name = "groupId")] Guid groupId,
+             [FromQuery(Name = "page")] PageRequest pageRequest)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
-                IList<ChannelModel> channel = _ChannelService.RetrieveByGroup(groupId, true);
-                return channel;
+                IList<ChannelModel> channels = _ChannelService.RetrieveByGroup(groupId, true);
+                return Page(channels, pageRequest);
             });
         }
 
         [HttpGet]
-        public ActionResult<IList<ChannelModel>> RetrieveByGroupFields([FromQuery(Name = "groupId")][NotEmpty] Guid groupId, [FromQuery(Name = "fields")] IList<string> fields)
+        public ActionResult<Page<ChannelModel>> GetChannelByGroupFields(
+            [FromQuery(Name = "groupId")] Guid groupId,
+            [FromQuery(Name = "fields")] IList<string> fields,
+            [FromQuery(Name = "page")] PageRequest pageRequest)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
-                IList<ChannelModel> channel = _ChannelService.RetrieveByGroup(groupId, fields.ToArray());
-                return channel;
+                IList<ChannelModel> channels = _ChannelService.RetrieveByGroup(groupId, fields.ToArray());
+                return Page(channels, pageRequest);
             });
         }
 
         [HttpGet]
-        public ActionResult<IList<ChannelModel>> RetrieveAll()
+        public ActionResult<Page<ChannelModel>> GetChannelAll([FromQuery(Name = "page")] PageRequest pageRequest)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
-                IList<ChannelModel> channel = _ChannelService.RetrieveAll(true);
-                return channel;
+                IList<ChannelModel> channels = _ChannelService.RetrieveAll(true);
+                return Page(channels, pageRequest);
             });
         }
 
         [HttpGet]
-        public ActionResult<IList<ChannelModel>> RetrieveAllFields([FromQuery(Name = "fields")] IList<string> fields)
+        public ActionResult<Page<ChannelModel>> GetChannelAllFields(
+            [FromQuery(Name = "fields")] IList<string> fields,
+            [FromQuery(Name = "page")] PageRequest pageRequest)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
-                IList<ChannelModel> channel = _ChannelService.RetrieveAll(fields.ToArray());
-                return channel;
+                IList<ChannelModel> channels = _ChannelService.RetrieveAll(fields.ToArray());
+                return Page(channels, pageRequest);
             });
-        }
-
-        private ActionResult<T> ExecuteWithValidateAndHandleErrors<T>(Func<T> func)
-        {
-            try
-            {
-                RequestIsValidOrThrown();
-                return Ok(func.Invoke());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorResponse() { Message = ex.Message });
-            }
-        }
-
-
-        private void RequestIsValidOrThrown()
-        {
-            if (!ModelState.IsValid)
-            {
-                throw new Exception(string.Join(
-                    ",",
-                    ModelState.Values
-                                .SelectMany(x => x.Errors)
-                                .Select(x => x.ErrorMessage)
-                                .ToArray()));
-            }
-        }
+        }    
     }
 }

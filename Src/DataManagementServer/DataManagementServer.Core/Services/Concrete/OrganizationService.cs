@@ -110,6 +110,7 @@ namespace DataManagementServer.Core.Services.Concrete
 
         Guid IGroupService.Create(Guid parentId)
         {
+            (this as IGroupService).ExistOrTrown(parentId);
             var model = new GroupModel() { ParentId = parentId };
             var group = new Group(model);
             _Groups[group.Id] = group;
@@ -126,6 +127,9 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 throw new ArgumentNullException(nameof(model));
             }
+
+            if (model.ParentId != null && Guid.Empty.Equals(model.ParentId)) { (this as IGroupService).ExistOrTrown(model.ParentId ?? Guid.Empty); }
+
             var group = new Group(model);
             _Groups[group.Id] = group;
 

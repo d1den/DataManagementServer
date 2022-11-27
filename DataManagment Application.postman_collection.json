@@ -1,0 +1,463 @@
+{
+	"info": {
+		"_postman_id": "a3a3b628-4592-4c51-b0dd-29a732e0035c",
+		"name": "DataManagment Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17074621"
+	},
+	"item": [
+		{
+			"name": "Channels",
+			"item": [
+				{
+					"name": "Create Channel",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/CreateChannel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"CreateChannel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Channel in Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/CreateChannelInGroup?groupId=87ea296e-fcaa-433d-b409-dfd9c78caef9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"CreateChannelInGroup"
+							],
+							"query": [
+								{
+									"key": "groupId",
+									"value": "87ea296e-fcaa-433d-b409-dfd9c78caef9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Channel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannel?channelId={{channel_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannel"
+							],
+							"query": [
+								{
+									"key": "channelId",
+									"value": "{{channel_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Channel By Model",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Fields\": {\r\n        \"Name\": \"asba\",\r\n        \"aboba\": \"clen\",\r\n        \"clen\": \"aboba\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/CreateChannelByModel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"CreateChannelByModel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Channel By Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannelByGroup?channelId=ee7454b3-9c00-4f27-9d53-a307d9ed47a6&fields[0]=Name&fields[1]=Status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannelByGroup"
+							],
+							"query": [
+								{
+									"key": "channelId",
+									"value": "ee7454b3-9c00-4f27-9d53-a307d9ed47a6"
+								},
+								{
+									"key": "fields[0]",
+									"value": "Name"
+								},
+								{
+									"key": "fields[1]",
+									"value": "Status"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Channel Fields",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannelFields?channelId=3d3ff229-4d85-40ec-8116-50c6a76f7d99&fields[0]=Name&fields[1]=Status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannelFields"
+							],
+							"query": [
+								{
+									"key": "channelId",
+									"value": "3d3ff229-4d85-40ec-8116-50c6a76f7d99"
+								},
+								{
+									"key": "fields[0]",
+									"value": "Name"
+								},
+								{
+									"key": "fields[1]",
+									"value": "Status"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Channel Fields By Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannelByGroupFields?groupId=00000000-0000-0000-0000-000000000000&fields[0]=Name&fields[1]=Status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannelByGroupFields"
+							],
+							"query": [
+								{
+									"key": "groupId",
+									"value": "00000000-0000-0000-0000-000000000000"
+								},
+								{
+									"key": "fields[0]",
+									"value": "Name"
+								},
+								{
+									"key": "fields[1]",
+									"value": "Status"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Channel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannelAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannelAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Channel Fields",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Channel/GetChannelAllFields?fields[0]=Name&fields[1]=Status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Channel",
+								"GetChannelAllFields"
+							],
+							"query": [
+								{
+									"key": "fields[0]",
+									"value": "Name"
+								},
+								{
+									"key": "fields[1]",
+									"value": "Status"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Group",
+			"item": [
+				{
+					"name": "Create Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Group/CreateGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"CreateGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group With Parent Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Group/CreateGroupInGroup?parentId=7c5fec13-69ec-4a91-b1db-2d3b48e1a901",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"CreateGroupInGroup"
+							],
+							"query": [
+								{
+									"key": "parentId",
+									"value": "7c5fec13-69ec-4a91-b1db-2d3b48e1a901"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group By Model",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Fields\": {\r\n        \"Name\": \"asba\",\r\n        \"aboba\": \"clen\",\r\n        \"clen\": \"aboba\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5257/api/Group/CreateGroupByModel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"CreateGroupByModel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Group By Model",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"id\": \"b69ca2cc-782b-4ad8-acc0-c797e146c8d3\",\r\n    \"Fields\": {\r\n\r\n        \"Name\": \"ASra\",\r\n        \"aboba\": \"clen\",\r\n        \"clen\": \"aboba\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5257/api/Group/UpdateGroupByModel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"UpdateGroupByModel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Group/GetGroup&groupId=e762d8a6-5baf-40a4-a11e-9716d4cb3f6d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"GetGroup&groupId=e762d8a6-5baf-40a4-a11e-9716d4cb3f6d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Group By Parent",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Group/GetGroupByParent?parentId=7c5fec13-69ec-4a91-b1db-2d3b48e1a901&allFields=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"GetGroupByParent"
+							],
+							"query": [
+								{
+									"key": "parentId",
+									"value": "7c5fec13-69ec-4a91-b1db-2d3b48e1a901"
+								},
+								{
+									"key": "allFields",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5257/api/Group/GetAllGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5257",
+							"path": [
+								"api",
+								"Group",
+								"GetAllGroup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,6 +1,6 @@
 ﻿using DataManagementServer.Common.Schemes;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -13,7 +13,6 @@ namespace DataManagementServer.Common.Models
         /// Id корневой группы
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public static readonly Guid RootGroupId = Guid.Empty;
 
         /// <summary>
@@ -25,7 +24,6 @@ namespace DataManagementServer.Common.Models
         /// Id родительской группы
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public Guid? ParentId
         {
             get
@@ -49,7 +47,6 @@ namespace DataManagementServer.Common.Models
         /// Название группы
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Name
         {
             get

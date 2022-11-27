@@ -6,21 +6,9 @@ using System;
 
 namespace DataManagementServer.Core.Tests.Channels
 {
-    struct Boba
-    {
-        public string Biba { get; set; }
-    }
-
     [TestClass]
     public class ChannelTest
     {
-        [TestMethod]
-        public void StructTest()
-        {
-            Console.WriteLine(new Boba { Biba = "str"}.Equals(new Boba { Biba = "str"}));
-
-        }
-
         [TestMethod]
         public void UpdateValue_CorrectType()
         {

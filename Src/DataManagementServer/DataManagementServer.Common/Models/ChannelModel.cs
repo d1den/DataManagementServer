@@ -177,24 +177,6 @@ namespace DataManagementServer.Common.Models
         }
         #endregion
 
-        #region Serializer
-
-        [JsonPropertyName("GroupId")]
-        public Guid? GroupIdDeserialize { set { GroupId = value; } }
-        [JsonPropertyName("Name")]
-        public string NameDeserialize { set { Name = value; } }
-        [JsonPropertyName("Description")]
-        public string DescriptionDeserialize { set { Description = value; } }
-        [JsonPropertyName("ValueType")]
-        public TypeCode? ValueTypeDeserialize { set { ValueType = value; } }
-        [JsonPropertyName("Value")]
-        public object ValueDeserialize { set { Value = value; } }
-        [JsonPropertyName("UpdateOn")]
-        public DateTime? UpdateOnDeserialize { set { UpdateOn = value; } }
-        [JsonPropertyName("Status")]
-        public ChannelStatus? StatusDeserialize { set { Status = value; } }
-
-        #endregion Serializer
         /// <summary>
         /// Конструктор
         /// </summary>
