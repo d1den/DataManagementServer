@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "DataManagementServer.Sdk": {
+      "commandName": "Project"
+    }
+  }
+}

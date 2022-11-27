@@ -43,6 +43,10 @@ namespace DataManagementServer.Sdk.Channels
         Guid Create(GroupModel model);
         #endregion
 
+        #region Exist
+
+        void ExistOrTrown(Guid groupId);
+        #endregion
         #region Retrieve
         /// <summary>
         /// Получить группу

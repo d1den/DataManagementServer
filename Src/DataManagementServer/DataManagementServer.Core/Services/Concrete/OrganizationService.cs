@@ -136,6 +136,12 @@ namespace DataManagementServer.Core.Services.Concrete
         }
         #endregion
 
+        #region
+        void IGroupService.ExistOrTrown(Guid groupId)
+        {
+            (this as IGroupService).Retrieve(groupId);
+        }
+        #endregion
         #region Retrieve
         GroupModel IGroupService.Retrieve(Guid id)
         {
@@ -284,6 +290,7 @@ namespace DataManagementServer.Core.Services.Concrete
 
         Guid IChannelService.Create(Guid groupId)
         {
+            (this as IGroupService).ExistOrTrown(groupId);
             var model = new ChannelModel() { GroupId = groupId };
             var channel = new Channel(model);
             _Channels[channel.Id] = channel;
@@ -300,6 +307,11 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 throw new ArgumentNullException(nameof(model));
             }
+
+
+            if (model.GroupId != null && Guid.Empty.Equals(model.GroupId)) { (this as IGroupService).ExistOrTrown(model.GroupId ?? Guid.Empty); }
+            
+
             var channel = new Channel(model);
             _Channels[channel.Id] = channel;
 

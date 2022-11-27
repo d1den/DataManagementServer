@@ -153,7 +153,7 @@ namespace DataManagementServer.Core.Channels
                 throw new ArgumentNullException(nameof(model));
             }
 
-            Id = model.Id == Guid.Empty
+            Id = Guid.Empty.Equals(model.Id)
                 ? Guid.NewGuid()
                 : model.Id;
 
@@ -254,10 +254,10 @@ namespace DataManagementServer.Core.Channels
                         GroupId = model.GroupId ?? Guid.Empty; 
                         continue;
                     case ChannelScheme.Name:
-                        Name = model.Name;
+                        Name = model.Name ?? Constants.DefaultChannelName;
                         continue;
                     case ChannelScheme.Description:
-                        Description = model.Description;
+                        Description = model.Description ?? Constants.DefaultChannelDescription;
                         continue;
                     case ChannelScheme.ValueType: continue;
                     case ChannelScheme.Value:

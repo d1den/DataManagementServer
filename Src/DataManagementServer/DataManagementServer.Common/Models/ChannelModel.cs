@@ -1,6 +1,6 @@
 ﻿using DataManagementServer.Common.Schemes;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -19,7 +19,6 @@ namespace DataManagementServer.Common.Models
         /// Id группы канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public Guid? GroupId
         {
             get
@@ -43,7 +42,6 @@ namespace DataManagementServer.Common.Models
         /// Название Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Name
         {
             get
@@ -67,7 +65,6 @@ namespace DataManagementServer.Common.Models
         /// Описание Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Description
         {
             get
@@ -91,7 +88,6 @@ namespace DataManagementServer.Common.Models
         /// Тип данных значения Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public TypeCode? ValueType
         {
             get
@@ -115,7 +111,6 @@ namespace DataManagementServer.Common.Models
         /// Значение Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public object Value
         {
             get
@@ -139,7 +134,6 @@ namespace DataManagementServer.Common.Models
         /// Дата обновления Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public DateTime? UpdateOn
         {
             get
@@ -163,7 +157,6 @@ namespace DataManagementServer.Common.Models
         /// Статус Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ChannelStatus? Status
         {
             get
@@ -184,12 +177,29 @@ namespace DataManagementServer.Common.Models
         }
         #endregion
 
+        #region Serializer
+
+        [JsonPropertyName("GroupId")]
+        public Guid? GroupIdDeserialize { set { GroupId = value; } }
+        [JsonPropertyName("Name")]
+        public string NameDeserialize { set { Name = value; } }
+        [JsonPropertyName("Description")]
+        public string DescriptionDeserialize { set { Description = value; } }
+        [JsonPropertyName("ValueType")]
+        public TypeCode? ValueTypeDeserialize { set { ValueType = value; } }
+        [JsonPropertyName("Value")]
+        public object ValueDeserialize { set { Value = value; } }
+        [JsonPropertyName("UpdateOn")]
+        public DateTime? UpdateOnDeserialize { set { UpdateOn = value; } }
+        [JsonPropertyName("Status")]
+        public ChannelStatus? StatusDeserialize { set { Status = value; } }
+
+        #endregion Serializer
         /// <summary>
         /// Конструктор
         /// </summary>
         public ChannelModel()
         {
-
         }
 
         /// <summary>
