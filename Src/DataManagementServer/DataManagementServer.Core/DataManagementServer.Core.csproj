@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataManagementServer.Common\DataManagementServer.Common.csproj" />
     <ProjectReference Include="..\DataManagementServer.Sdk\DataManagementServer.Sdk.csproj" />
   </ItemGroup>
 

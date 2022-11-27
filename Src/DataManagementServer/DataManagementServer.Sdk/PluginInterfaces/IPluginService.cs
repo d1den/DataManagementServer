@@ -39,25 +39,28 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         bool TryGetPlugin(string pluginTypeName, out IPlugin plugin);
 
         /// <summary>
-        /// Получить плагин или null
+        /// Получить плагин
         /// </summary>
         /// <param name="id">Id плагина</param>
         /// <returns>Плагин</returns>
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном плагине</exception>
         IPlugin GetPlugin(Guid id);
 
 
         /// <summary>
-        /// Получить плагин или null
+        /// Получить плагин
         /// </summary>
         /// <param name="pluginType">Тип плагина</param>
         /// <returns>Плагин</returns>
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном плагине</exception>
         IPlugin GetPlugin(Type pluginType);
 
         /// <summary>
-        /// Получить плагин или null
+        /// Получить плагин
         /// </summary>
         /// <param name="pluginTypeName">Название типа плагина</param>
         /// <returns>Плагин</returns>
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном плагине</exception>
         IPlugin GetPlugin(string pluginTypeName);
 
         /// <summary>

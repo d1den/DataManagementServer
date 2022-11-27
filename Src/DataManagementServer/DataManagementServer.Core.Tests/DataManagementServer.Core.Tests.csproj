@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataManagementServer.Core\DataManagementServer.Core.csproj" />
-    <ProjectReference Include="..\DataManagementServer.Sdk\DataManagementServer.Sdk.csproj" />
   </ItemGroup>
 
 </Project>
