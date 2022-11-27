@@ -1,6 +1,7 @@
 ﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Common.Schemes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
 
 namespace DataManagementServer.Common.Tests
@@ -41,6 +42,47 @@ namespace DataManagementServer.Common.Tests
             //Act
             //Assert
             Assert.ThrowsException<Exception>(() => baseModel.CastToModel<DeviceModel>());
+        }
+
+        [TestMethod]
+        public void Serialize()
+        {
+            //Arrange
+            var pollingPeriod = 500;
+            var helloWorld = "Hello, World!";
+            var baseModel = new BaseModel(Guid.NewGuid())
+            {
+                [nameof(pollingPeriod)] = pollingPeriod,
+                [nameof(helloWorld)] = helloWorld
+            };
+
+            //Act
+            var json = JsonConvert.SerializeObject(baseModel);
+
+            //Assert
+            Assert.IsTrue(json.Contains(nameof(pollingPeriod)));
+            Assert.IsTrue(json.Contains(nameof(helloWorld)));
+        }
+
+        [TestMethod]
+        public void Deserialize()
+        {
+            //Arrange
+            var pollingPeriod = 500;
+            var helloWorld = "Hello, World!";
+            var baseModel = new BaseModel(Guid.NewGuid())
+            {
+                [nameof(pollingPeriod)] = pollingPeriod,
+                [nameof(helloWorld)] = helloWorld
+            };
+
+            //Act
+            var json = JsonConvert.SerializeObject(baseModel);
+            var newModel = JsonConvert.DeserializeObject<BaseModel>(json);
+
+            //Assert
+            Assert.IsTrue(newModel.Fields.ContainsKey(nameof(pollingPeriod)));
+            Assert.IsTrue(newModel.Fields.ContainsKey(nameof(helloWorld)));
         }
     }
 }
