@@ -49,12 +49,12 @@ namespace DataManagementServer.Sdk
         /// Обновить устройство
         /// </summary>
         /// <param name="model">Базовая модель устройства</param>
-        void Update(BaseDeviceModel model);
+        void Update(DeviceModel model);
 
         /// <summary>
         /// Получить модель устройства
         /// </summary>
         /// <returns>Базовая модель устройства</returns>
-        BaseDeviceModel ToModel();
+        DeviceModel ToModel();
     }
 }

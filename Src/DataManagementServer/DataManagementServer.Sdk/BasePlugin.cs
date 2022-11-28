@@ -13,7 +13,7 @@ namespace DataManagementServer.Sdk
     /// <typeparam name="TController">Тип контроллера api плагина</typeparam>
     public abstract class BasePlugin<TDevice, TDeviceModel, TController> : IPlugin
         where TDevice : IDevice
-        where TDeviceModel : BaseDeviceModel
+        where TDeviceModel : DeviceModel
         where TController : BasePluginController
     {
         public Guid Id => Guid.NewGuid();
@@ -44,6 +44,16 @@ namespace DataManagementServer.Sdk
         /// Объект синхронизации потоков
         /// </summary>
         private readonly object _Lock = new ();
+
+        public PluginModel ToModel()
+        {
+            return new PluginModel()
+            {
+                Id = Id,
+                Name = Name,
+                Type = Type
+            };
+        }
 
         #region Виртуальные и абстрактные методы
         public virtual void Dispose()

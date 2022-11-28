@@ -25,7 +25,7 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// </summary>
         /// <param name="model">Модель устройства</param>
         /// <returns>Id устройства</returns>
-        Guid CreateAndStart(BaseDeviceModel model);
+        Guid CreateAndStart(DeviceModel model);
 
         /// <summary>
         /// Инициализировать устройства по json строке
@@ -56,7 +56,8 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// Обновить устройство на основе модели устройства
         /// </summary>
         /// <param name="model">Модель устройства</param>
-        void UpdateDevice(BaseDeviceModel model);
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном устройстве</exception>
+        void UpdateDevice(DeviceModel model);
 
         /// <summary>
         /// Попытка удаления устройства
@@ -71,31 +72,34 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// <param name="id">Id устройства</param>
         /// <param name="model">Модель устройства</param>
         /// <returns>Результат получения</returns>
-        bool TryGetDevice(Guid id, out BaseDeviceModel model);
+        bool TryGetDevice(Guid id, out DeviceModel model);
 
         /// <summary>
         /// Получение устройства
         /// </summary>
         /// <param name="id">Id устройства</param>
         /// <returns>Базовая модель устройства</returns>
-        BaseDeviceModel GeDevice(Guid id);
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном устройстве</exception>
+        DeviceModel GeDevice(Guid id);
 
         /// <summary>
         /// Получение всех устройств
         /// </summary>
         /// <returns>Список моделей всех устройств</returns>
-        List<BaseDeviceModel> GetAll();
+        List<DeviceModel> GetAll();
 
         /// <summary>
         /// Запустить устройство
         /// </summary>
         /// <param name="id">Id устройства</param>
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном устройстве</exception>
         void StartDevice(Guid id);
 
         /// <summary>
         /// Остановить устройство
         /// </summary>
         /// <param name="id">Id устройства</param>
+        /// <exception cref="KeyNotFoundException">Ошибка при не найденном устройстве</exception>
         void StopDevice(Guid id);
 
         /// <summary>

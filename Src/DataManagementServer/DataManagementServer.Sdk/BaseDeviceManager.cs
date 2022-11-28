@@ -18,7 +18,7 @@ namespace DataManagementServer.Sdk
     /// <typeparam name="TModel">Тип модели устройства</typeparam>
     public abstract class BaseDeviceManager<TDevice, TModel> : IDeviceManager
         where TDevice : IDevice
-        where TModel : BaseDeviceModel
+        where TModel : DeviceModel
     {
         #region Зависимости
         /// <summary>
@@ -61,7 +61,7 @@ namespace DataManagementServer.Sdk
         /// </summary>
         /// <param name="model">Модель устройства</param>
         /// <returns>Устройство</returns>
-        protected abstract TDevice Create(BaseDeviceModel model = default);
+        protected abstract TDevice Create(DeviceModel model = default);
 
 
         public Guid CreateAndStart()
@@ -69,7 +69,7 @@ namespace DataManagementServer.Sdk
             return CreateAndStart(null);
         }
 
-        public Guid CreateAndStart(BaseDeviceModel model)
+        public Guid CreateAndStart(DeviceModel model)
         {
             var device = Create(model);
             _Devices.TryAdd(device.Id, device);
@@ -115,7 +115,7 @@ namespace DataManagementServer.Sdk
             UpdateDevice(model);
         }
 
-        public void UpdateDevice(BaseDeviceModel model)
+        public void UpdateDevice(DeviceModel model)
         {
             _ = model ?? throw new ArgumentNullException(nameof(model));
 
@@ -152,7 +152,7 @@ namespace DataManagementServer.Sdk
             Task.WaitAll(tasks);
         }
 
-        public bool TryGetDevice(Guid id, out BaseDeviceModel model)
+        public bool TryGetDevice(Guid id, out DeviceModel model)
         {
             model = default;
             if (!_Devices.TryGetValue(id, out TDevice device))
@@ -164,7 +164,7 @@ namespace DataManagementServer.Sdk
             return true;
         }
 
-        public BaseDeviceModel GeDevice(Guid id)
+        public DeviceModel GeDevice(Guid id)
         {
             if (!_Devices.TryGetValue(id, out TDevice device))
             {
@@ -174,7 +174,7 @@ namespace DataManagementServer.Sdk
             return device.ToModel();
         }
 
-        public List<BaseDeviceModel> GetAll()
+        public List<DeviceModel> GetAll()
         {
             return _Devices.Values.Select(device => device.ToModel())
                 .ToList();

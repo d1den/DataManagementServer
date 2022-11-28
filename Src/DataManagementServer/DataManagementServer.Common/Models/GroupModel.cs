@@ -17,11 +17,6 @@ namespace DataManagementServer.Common.Models
         public static readonly Guid RootGroupId = Guid.Empty;
 
         /// <summary>
-        /// Id группы
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
         /// Id родительской группы
         /// </summary>
         [JsonIgnore]
@@ -72,23 +67,12 @@ namespace DataManagementServer.Common.Models
         /// <summary>
         /// Конструктор
         /// </summary>
-        public GroupModel()
-        {
-
-        }
+        public GroupModel() { }
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="id">Id группы</param>
-        /// <exception cref="ArgumentNullException">Ошибка, если Id пустое</exception>
-        public GroupModel(Guid id)
-        {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-            Id = id;
-        }
+        public GroupModel(Guid id) : base(id) { }
     }
 }

@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataManagementServer.Core.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataManagementServer.Common", "DataManagementServer.Common\DataManagementServer.Common.csproj", "{4FAC7FD8-6FAF-46E9-B828-EC135722AD5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataManagementServer.AppServer", "DataManagementServer.AppServer\DataManagementServer.AppServer.csproj", "{B48CFDE5-4365-4FB9-9224-189F0895E317}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataManagementServer.AppServer", "DataManagementServer.AppServer\DataManagementServer.AppServer.csproj", "{B48CFDE5-4365-4FB9-9224-189F0895E317}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataManagementServer.Common.Tests", "DataManagementServer.Common.Tests\DataManagementServer.Common.Tests.csproj", "{AB2862F8-48ED-43C6-A803-767B869FF437}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{B48CFDE5-4365-4FB9-9224-189F0895E317}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B48CFDE5-4365-4FB9-9224-189F0895E317}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B48CFDE5-4365-4FB9-9224-189F0895E317}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB2862F8-48ED-43C6-A803-767B869FF437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2862F8-48ED-43C6-A803-767B869FF437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB2862F8-48ED-43C6-A803-767B869FF437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB2862F8-48ED-43C6-A803-767B869FF437}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
