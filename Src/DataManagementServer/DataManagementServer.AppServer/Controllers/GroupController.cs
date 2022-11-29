@@ -1,5 +1,4 @@
-﻿using DataManagementServer.AppServer.Utils;
-using DataManagementServer.Common.Models;
+﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Sdk.Channels;
 using Microsoft.AspNetCore.Mvc;
 using Pagination;
@@ -30,7 +29,7 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpPost]
-        public ActionResult<GroupModel> CreateGroupInGroup([FromQuery(Name = "parentId")][NotEmpty] Guid parentId)
+        public ActionResult<GroupModel> CreateGroupInGroup([FromQuery(Name = "parentId")] Guid parentId)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
@@ -64,7 +63,7 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<GroupModel> GetGroup([FromQuery(Name = "groupId")][NotEmpty] Guid groupId)
+        public ActionResult<GroupModel> GetGroup([FromQuery(Name = "groupId")] Guid groupId)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
@@ -75,7 +74,7 @@ namespace DataManagementServer.AppServer.Controllers
 
         [HttpGet]
         public ActionResult<Page<GroupModel>> GetGroupByParent(
-            [FromQuery(Name = "groupId")][NotEmpty] Guid parentId,
+            [FromQuery(Name = "groupId")] Guid parentId,
             [FromQuery(Name = "page")] PageRequest pageRequest,
             [FromQuery(Name = "allFields")] bool allFields = true)
         {

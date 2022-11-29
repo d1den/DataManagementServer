@@ -1,6 +1,4 @@
-﻿using DataManagementServer.AppServer.Responses;
-using DataManagementServer.AppServer.Utils;
-using DataManagementServer.Common.Models;
+﻿using DataManagementServer.Common.Models;
 using DataManagementServer.Sdk.Channels;
 using Microsoft.AspNetCore.Mvc;
 using Pagination;
@@ -44,7 +42,7 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ChannelModel> CreateChannelInGroup([FromQuery(Name = "groupId")][NotEmpty] Guid groupId)
+        public ActionResult<ChannelModel> CreateChannelInGroup([FromQuery(Name = "groupId")] Guid groupId)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
@@ -66,7 +64,7 @@ namespace DataManagementServer.AppServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ChannelModel> GetChannel([FromQuery(Name = "channelId")][NotEmpty] Guid channelId)
+        public ActionResult<ChannelModel> GetChannel([FromQuery(Name = "channelId")] Guid channelId)
         {
             return ExecuteWithValidateAndHandleErrors(() =>
             {
@@ -77,7 +75,7 @@ namespace DataManagementServer.AppServer.Controllers
 
         [HttpGet]
         public ActionResult<ChannelModel> GetChannelFields(
-            [FromQuery(Name = "channelId")][NotEmpty] Guid channelId,
+            [FromQuery(Name = "channelId")] Guid channelId,
             [FromQuery(Name = "fields")] IList<string> fields)
         {
             return ExecuteWithValidateAndHandleErrors(() =>

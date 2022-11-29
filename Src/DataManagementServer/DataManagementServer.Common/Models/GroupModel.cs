@@ -10,12 +10,6 @@ namespace DataManagementServer.Common.Models
     public class GroupModel : BaseModel
     {
         /// <summary>
-        /// Id корневой группы
-        /// </summary>
-        [JsonIgnore]
-        public static readonly Guid RootGroupId = Guid.Empty;
-
-        /// <summary>
         /// Id группы
         /// </summary>
         public Guid Id { get; set; }
@@ -71,7 +65,6 @@ namespace DataManagementServer.Common.Models
         /// </summary>
         public GroupModel()
         {
-
         }
 
         /// <summary>

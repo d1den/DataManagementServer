@@ -10,24 +10,23 @@ namespace Pagination
         public int PageSize { get; }
         public int PageNumber { get; }
         public int TotalElementsCount { get; }
-        public int TotalPageCount { get { return (int) Math.Ceiling(TotalElementsCount / ((double) PageSize)); } }
-
-        public bool IsOutOfRange { get { return PageNumber > TotalPageCount; } }
+        public int TotalPageCount => (int) Math.Ceiling(TotalElementsCount / ((double)PageSize));
+        public bool IsOutOfRange => PageNumber > TotalPageCount;
 
         public Page(IList<T> values, int pageSize, int pageNumber, int totalElementsCount)
         {
 
             if (pageNumber < 1)
             {
-                throw new ArgumentException(ErrorMessages.IncorrectPageNumber);
+                throw new ArgumentOutOfRangeException(ErrorMessages.IncorrectPageNumber);
             }
             if (pageSize < 1)
             {
-                throw new ArgumentException(ErrorMessages.IncorrectPageSize);
+                throw new ArgumentOutOfRangeException(ErrorMessages.IncorrectPageSize);
             }
             if (totalElementsCount < 0)
             {
-                throw new ArgumentException(ErrorMessages.IncorrectTotalElementsCount);
+                throw new ArgumentOutOfRangeException(ErrorMessages.IncorrectTotalElementsCount);
             }
             if (values.Count > pageSize)
             {

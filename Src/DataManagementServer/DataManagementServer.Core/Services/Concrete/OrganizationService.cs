@@ -58,6 +58,8 @@ namespace DataManagementServer.Core.Services.Concrete
         /// </summary>
         public OrganizationService()
         {
+            _Groups.AddOrUpdate(Guid.Empty, Group.RootGroup, (id, old) => Group.RootGroup);
+
             _GroupsObservable = Observable
                 .FromEventPattern<CollectionChangeEventArgs>(
                 handler => _GroupsChangeEvent += handler,
@@ -128,7 +130,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 throw new ArgumentNullException(nameof(model));
             }
 
-            if (model.ParentId != null && Guid.Empty.Equals(model.ParentId)) { (this as IGroupService).ExistOrTrown(model.ParentId ?? Guid.Empty); }
+            (this as IGroupService).ExistOrTrown(model.ParentId ?? Guid.Empty);
 
             var group = new Group(model);
             _Groups[group.Id] = group;
@@ -213,7 +215,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = group.ToModel();
-                    model.ParentId = GroupModel.RootGroupId;
+                    model.ParentId = Group.RootGroup.Id;
 
                     (this as IGroupService).Update(model);
                 }
@@ -227,7 +229,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = channel.ToModel();
-                    model.GroupId = GroupModel.RootGroupId;
+                    model.GroupId = Group.RootGroup.Id;
 
                     (this as IChannelService).Update(model);
                 }
@@ -313,7 +315,7 @@ namespace DataManagementServer.Core.Services.Concrete
             }
 
 
-            if (model.GroupId != null && Guid.Empty.Equals(model.GroupId)) { (this as IGroupService).ExistOrTrown(model.GroupId ?? Guid.Empty); }
+            (this as IGroupService).ExistOrTrown(model.GroupId ?? Guid.Empty);
             
 
             var channel = new Channel(model);
