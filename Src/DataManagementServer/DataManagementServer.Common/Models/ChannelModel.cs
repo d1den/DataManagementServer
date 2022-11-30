@@ -1,6 +1,6 @@
 ﻿using DataManagementServer.Common.Schemes;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -14,7 +14,6 @@ namespace DataManagementServer.Common.Models
         /// Id группы канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public Guid? GroupId
         {
             get
@@ -38,7 +37,6 @@ namespace DataManagementServer.Common.Models
         /// Название Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Name
         {
             get
@@ -62,7 +60,6 @@ namespace DataManagementServer.Common.Models
         /// Описание Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Description
         {
             get
@@ -86,7 +83,6 @@ namespace DataManagementServer.Common.Models
         /// Тип данных значения Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public TypeCode? ValueType
         {
             get
@@ -110,7 +106,6 @@ namespace DataManagementServer.Common.Models
         /// Значение Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public object Value
         {
             get
@@ -134,7 +129,6 @@ namespace DataManagementServer.Common.Models
         /// Дата обновления Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public DateTime? UpdateOn
         {
             get
@@ -158,7 +152,6 @@ namespace DataManagementServer.Common.Models
         /// Статус Канала
         /// </summary>
         [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ChannelStatus? Status
         {
             get

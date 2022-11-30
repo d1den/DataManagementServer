@@ -12,11 +12,13 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-PrintTypeName<BaseModel>();
-Console.ReadLine();
+IList<String> strings = new List<String>();
+strings.Add("1");
+strings.Add("2");
+strings.Add("3");
+strings.Add("5");
+strings.Add("4");
+strings.Add("6");
 
-static void PrintTypeName<T>()
-{
-    var type = typeof(T);
-    Console.WriteLine(type?.FullName);
-}
+
+Console.WriteLine(String.Join(",",strings.Skip(7).Take(10).ToList()));
