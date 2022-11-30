@@ -96,6 +96,18 @@ namespace DataManagementServer.AppServer.Controllers
                 return Page(group, pageRequest);
             });
         }
+
+        [HttpDelete]
+        public ActionResult DeleteGroup(
+            [FromQuery(Name = "groupId")] Guid groupId,
+            [FromQuery(Name = "withChildren")] bool withChildren = false
+            )
+        {
+            return ExecuteWithValidateAndHandleErrors(() =>
+            {
+                _GroupService.Delete(groupId, withChildren);
+            });
+        }
     }
       
 }

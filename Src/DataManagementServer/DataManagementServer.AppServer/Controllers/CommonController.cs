@@ -23,6 +23,19 @@ namespace DataManagementServer.AppServer.Controllers
             }
         }
 
+        public ActionResult ExecuteWithValidateAndHandleErrors(Action func)
+        {
+            try
+            {
+                RequestIsValidOrThrown();
+                func.Invoke();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse() { Message = ex.Message });
+            }
+        }
 
         public void RequestIsValidOrThrown()
         {

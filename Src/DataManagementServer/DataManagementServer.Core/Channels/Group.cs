@@ -84,6 +84,9 @@ namespace DataManagementServer.Core.Channels
 
         private Group(Guid Id, Guid ParentId, string Name)
         {
+            this.Id = Id;
+            this.ParentId = ParentId;
+            this.Name = Name;
             ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
                  handler => _UpdateEvent += handler,
                  handler => _UpdateEvent -= handler);

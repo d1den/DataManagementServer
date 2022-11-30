@@ -121,6 +121,10 @@
     <value>Channel with id = {0} not exist!</value>
     <comment>Шаблон ошибки об отсуствии канала с запрашиваемым Id</comment>
   </data>
+  <data name="ForbiddenToDeleteRootGroup" xml:space="preserve">
+    <value>Forbidden to delete root group</value>
+    <comment>Главную группу нельзя удалять</comment>
+  </data>
   <data name="GroupNotExistError" xml:space="preserve">
     <value>Group with id = {0} not exist!</value>
     <comment>Шаблон ошибки об отсуствии группы с запрашиваемым Id</comment>

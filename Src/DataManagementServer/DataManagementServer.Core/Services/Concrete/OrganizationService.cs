@@ -192,6 +192,10 @@ namespace DataManagementServer.Core.Services.Concrete
         #region Delete
         void IGroupService.Delete(Guid id, bool withChildren)
         {
+            if(Group.RootGroup.Id == id)
+            {
+                throw new ArgumentException(ErrorMessages.ForbiddenToDeleteRootGroup);
+            }
             if (!_Groups.Remove(id, out Group baseGroup))
             {
                 throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));

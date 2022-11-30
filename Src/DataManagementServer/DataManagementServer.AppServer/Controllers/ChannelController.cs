@@ -130,6 +130,26 @@ namespace DataManagementServer.AppServer.Controllers
                 IList<ChannelModel> channels = _ChannelService.RetrieveAll(fields.ToArray());
                 return Page(channels, pageRequest);
             });
-        }    
+        }
+
+        [HttpPatch]
+        public ActionResult<ChannelModel> UpdateChannelByModel([FromBody] ChannelModel model)
+        {
+            return ExecuteWithValidateAndHandleErrors(() =>
+            {
+                _ChannelService.Update(model);
+                ChannelModel channel = _ChannelService.Retrieve(model.Id);
+                return channel;
+            });
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteChannel([FromQuery(Name = "channelId")] Guid channelId)
+        {
+            return ExecuteWithValidateAndHandleErrors(() =>
+            {
+                _ChannelService.Delete(channelId);
+            });
+        }
     }
 }
