@@ -1,4 +1,4 @@
-﻿namespace DataManagementServer.Sdk
+﻿namespace DataManagementServer.Common.Models
 {
     /// <summary>
     /// Типы плагинов

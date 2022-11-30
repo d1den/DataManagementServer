@@ -9,11 +9,6 @@ namespace DataManagementServer.Common.Models
     /// </summary>
     public class ChannelModel : BaseModel
     {
-        /// <summary>
-        /// Id канала
-        /// </summary>
-        public Guid Id { get; set; }
-
         #region Свойства для доступа к стандартным полям Каналов
         /// <summary>
         /// Id группы канала
@@ -180,17 +175,12 @@ namespace DataManagementServer.Common.Models
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ChannelModel()
-        {
-        }
+        public ChannelModel() { }
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="id">Id Канала</param>
-        public ChannelModel(Guid id)
-        {
-            Id = id;
-        }
+        public ChannelModel(Guid id) : base(id) { }
     }
 }

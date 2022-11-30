@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataManagementServer.Common.Models;
+using System;
 
 namespace DataManagementServer.Sdk.PluginInterfaces
 {
@@ -32,5 +33,11 @@ namespace DataManagementServer.Sdk.PluginInterfaces
         /// </summary>
         /// <param name="serviceProvider">Провайдер сервисов ядра</param>
         void Initialize(IServiceProvider serviceProvider);
+
+        /// <summary>
+        /// Получить модель плагина
+        /// </summary>
+        /// <returns>Модель плагина</returns>
+        PluginModel ToModel();
     }
 }

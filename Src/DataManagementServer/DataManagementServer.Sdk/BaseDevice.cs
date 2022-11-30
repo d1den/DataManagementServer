@@ -19,7 +19,26 @@ namespace DataManagementServer.Sdk
 
         public DeviceStatus Status { get; protected set; }
 
-        public int PollingPeriod { get; protected set; }
+        /// <summary>
+        /// Период опроса
+        /// </summary>
+        private int _PollingPeriod = 0;
+
+        public int PollingPeriod
+        {
+            get
+            {
+                return _PollingPeriod;
+            }
+            protected set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(PollingPeriod));
+                }
+                _PollingPeriod = value;
+            }
+        }
         #endregion
 
         #region Зависимости
@@ -88,7 +107,7 @@ namespace DataManagementServer.Sdk
         /// <param name="channelService">Сервис доступа к каналам</param>
         /// <param name="model">Модель устройства</param>
         /// <exception cref="ArgumentNullException">Ошибка при null параметре</exception>
-        public BaseDevice(IGroupService groupService, IChannelService channelService, BaseDeviceModel model)
+        public BaseDevice(IGroupService groupService, IChannelService channelService, DeviceModel model)
         {
             GroupService = groupService ?? throw new ArgumentNullException(nameof(groupService));
             ChannelService = channelService ?? throw new ArgumentNullException(nameof(channelService));
@@ -97,7 +116,9 @@ namespace DataManagementServer.Sdk
             Id = model.Id == default ? Guid.NewGuid() : model.Id;
             Name = model.Name == default ? Constants.DefaultDeviceName : model.Name;
             Status = DeviceStatus.Created;
-            PollingPeriod = model.PollingPeriod == default ? BasePollingPeriod : model.PollingPeriod;
+            PollingPeriod = model.PollingPeriod == null 
+                ? BasePollingPeriod 
+                : model.PollingPeriod.Value;
         }
 
         public void Start()
@@ -204,7 +225,7 @@ namespace DataManagementServer.Sdk
         /// <param name="cancellationToken">Токен отмены выполнения работы</param>
         protected abstract void IterateWorkLoop(CancellationToken cancellationToken);
 
-        public virtual BaseDeviceModel ToModel()
+        public virtual DeviceModel ToModel()
         {
             Lock.EnterReadLock();
             try
@@ -222,9 +243,9 @@ namespace DataManagementServer.Sdk
         /// </summary>
         /// <remarks>Данный метод вызывается в методе-обёртке, использующий синхронизацию потоков</remarks>
         /// <returns>Модель устройства</returns>
-        protected abstract BaseDeviceModel UnsafeToModel();
+        protected abstract DeviceModel UnsafeToModel();
 
-        public virtual void Update(BaseDeviceModel model)
+        public virtual void Update(DeviceModel model)
         {
             Lock.EnterWriteLock();
             try
@@ -242,7 +263,7 @@ namespace DataManagementServer.Sdk
         /// </summary>
         /// <remarks>Данный метод вызывается в методе-обёртке, использующий синхронизацию потоков</remarks>
         /// <param name="model">Модель устройства</param>
-        protected abstract void UnsafeUpdate(BaseDeviceModel model);
+        protected abstract void UnsafeUpdate(DeviceModel model);
 
         public virtual void Dispose()
         {
