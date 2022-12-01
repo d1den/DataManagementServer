@@ -1,8 +1,11 @@
 using DataManagementServer.AppServer.Extentions;
+using DataManagementServer.AppServer.Hubs;
+using DataManagementServer.AppServer.Services;
 using DataManagementServer.Core.Services.Concrete;
 using DataManagementServer.Sdk.Channels;
 using DataManagementServer.Sdk.PluginInterfaces;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 var pluginFolderPath = "/Plugins";
@@ -16,6 +19,13 @@ builder.Services
     .AddControllers()
     .AddControllersFromAssemblies(assemblyLoader);
 
+// Добавляем сервисы SignalR - подтягиваем хабы
+builder.Services.AddSignalR();
+
+// Добавляем контекст хаба плагина как универсальный интерфейс контекта хаба
+builder.Services
+    .AddSingleton(provider => provider.GetService<IHubContext<PluginHub>>() as IHubContext);
+
 // Добавляем сервисы ядра
 builder.Services.AddSingleton(assemblyLoader)
     .AddSingleton<OrganizationService>()
@@ -23,11 +33,18 @@ builder.Services.AddSingleton(assemblyLoader)
     .AddSingleton<IChannelService>(provider => provider.GetService<OrganizationService>())
     .AddSingleton<IPluginService>(provider => new PluginService(assemblyLoader, provider));
 
+// Добавляем сервис уведомлений групп каналов
+builder.Services.AddSingleton<OrganizationNotificationService>();
+
 // Добавляем Singleton сервисы, определённые в сборках плагинов
 builder.Services.AddSingletonsFromAsseblies(assemblyLoader);
 
 var app = builder.Build();
 
+// Вызываем где-то сервис для первой инициализации (дальше просто в контроллерах получать его через DI)
+app.Services.GetService<OrganizationNotificationService>();
+
+// Маршрутизация к файлам
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -42,5 +59,9 @@ app.UseEndpoints(endpoints =>
     // Настраиваем маршрутизацию на основе атрибутов контроллера
     endpoints.MapControllers();
 });
+
+// Добавляем маршрутизацию к хабу
+app.MapHub<OrganizationHub>("/hub");
+app.MapHub<PluginHub>("/pluginHub");
 
 app.Run();

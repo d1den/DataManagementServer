@@ -3,10 +3,8 @@ using DataManagementServer.Common.Schemes;
 using DataManagementServer.Core.Resources;
 using DataManagementServer.Sdk.Channels;
 using DataManagementServer.Sdk.Extensions;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 
@@ -126,7 +124,12 @@ namespace DataManagementServer.Core.Channels
         /// <summary>
         /// Уведомитель об обновлении канала
         /// </summary>
-        public IObservable<EventPattern<UpdateEventArgs>> ObservableUpdate { get; }
+        public IObservable<UpdateEventArgs> ObservableUpdate { get; }
+
+        /// <summary>
+        /// Соединение уведомителя
+        /// </summary>
+        private readonly IDisposable _ObservableConnection;
         #endregion
 
         /// <summary>
@@ -136,9 +139,14 @@ namespace DataManagementServer.Core.Channels
         {
             Id = Guid.NewGuid();
             ValueType = TypeCode.Object;
-            ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
+
+            // Созданём уведомителя об обновлении с возможностью его отключения
+            var connectableObservable = Observable.FromEventPattern<UpdateEventArgs>(
                 handler => _UpdateEvent += handler,
-                handler => _UpdateEvent -= handler);
+                handler => _UpdateEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _ObservableConnection = connectableObservable.Connect();
+            ObservableUpdate = connectableObservable;
         }
 
         /// <summary>
@@ -159,9 +167,14 @@ namespace DataManagementServer.Core.Channels
 
             ValueType = TypeCode.Object;
             SetFieldsByModel(model);
-            ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
+
+            // Созданём уведомителя об обновлении с возможностью его отключения
+            var connectableObservable = Observable.FromEventPattern<UpdateEventArgs>(
                 handler => _UpdateEvent += handler,
-                handler => _UpdateEvent -= handler);
+                handler => _UpdateEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _ObservableConnection = connectableObservable.Connect();
+            ObservableUpdate = connectableObservable;
         }
 
         /// <summary>
@@ -416,6 +429,7 @@ namespace DataManagementServer.Core.Channels
                 return;
             }
 
+            _ObservableConnection?.Dispose();
             _Lock.Dispose();
             _IsDisposed = true;
         }
