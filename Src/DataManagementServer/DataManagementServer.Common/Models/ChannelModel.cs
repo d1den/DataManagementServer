@@ -120,7 +120,7 @@ namespace DataManagementServer.Common.Models
                         return null;
                     }
 
-                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(Guid), value?.GetType()));
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(TypeCode), value?.GetType()));
                 }
                 else 
                 {
@@ -219,7 +219,7 @@ namespace DataManagementServer.Common.Models
                         return null;
                     }
 
-                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(DateTime), value?.GetType()));
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(ChannelStatus), value?.GetType()));
                 }
                 else 
                 { 
