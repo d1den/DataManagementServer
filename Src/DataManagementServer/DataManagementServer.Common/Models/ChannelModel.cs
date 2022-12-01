@@ -1,6 +1,7 @@
-﻿using DataManagementServer.Common.Schemes;
+﻿using DataManagementServer.Common.Resources;
+using DataManagementServer.Common.Schemes;
+using Newtonsoft.Json;
 using System;
-using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -18,9 +19,24 @@ namespace DataManagementServer.Common.Models
         {
             get
             {
-                if (TryGetFieldValue(ChannelScheme.GroupId, out Guid? value))
+                if (TryGetFieldValue(ChannelScheme.GroupId, out object? value))
                 {
-                    return value;
+                    if(value is Guid)
+                    {
+                        return (Guid) value;
+                    } 
+                    
+                    if(value is string)
+                    {
+                        return Guid.Parse(value as string);
+                    }
+
+                    if (value is null)
+                    {
+                        return null;
+                    }
+
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(Guid), value?.GetType()));
                 }
                 else 
                 { 
@@ -87,9 +103,24 @@ namespace DataManagementServer.Common.Models
         {
             get
             {
-                if (TryGetFieldValue(ChannelScheme.ValueType, out TypeCode? value))
+                if (TryGetFieldValue(ChannelScheme.ValueType, out object? value))
                 {
-                    return value;
+                    if (value is TypeCode typeCode)
+                    {
+                        return typeCode;
+                    }
+
+                    if (value is string)
+                    {
+                        return (TypeCode) Enum.Parse(typeof(TypeCode), value as string, true);
+                    }
+
+                    if (value is null)
+                    {
+                        return null;
+                    }
+
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(Guid), value?.GetType()));
                 }
                 else 
                 {
@@ -133,9 +164,24 @@ namespace DataManagementServer.Common.Models
         {
             get
             {
-                if (TryGetFieldValue(ChannelScheme.UpdateOn, out DateTime? value))
+                if (TryGetFieldValue(ChannelScheme.UpdateOn, out object? value))
                 {
-                    return value;
+                    if (value is DateTime dateTime)
+                    {
+                        return dateTime;
+                    }
+
+                    if (value is string)
+                    {
+                        return DateTime.Parse(value as string);
+                    }
+
+                    if (value is null)
+                    {
+                        return null;
+                    }
+
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(DateTime), value?.GetType()));
                 }
                 else 
                 { 
@@ -156,9 +202,24 @@ namespace DataManagementServer.Common.Models
         {
             get
             {
-                if (TryGetFieldValue(ChannelScheme.Status, out ChannelStatus? value))
+                if (TryGetFieldValue(ChannelScheme.Status, out object value))
                 {
-                    return value;
+                    if (value is ChannelStatus channelStatus)
+                    {
+                        return channelStatus;
+                    }
+
+                    if (value is string)
+                    {
+                        return (ChannelStatus)Enum.Parse(typeof(ChannelStatus), value as string, true);
+                    }
+                    
+                    if(value is null)
+                    {
+                        return null;
+                    }
+
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(DateTime), value?.GetType()));
                 }
                 else 
                 { 

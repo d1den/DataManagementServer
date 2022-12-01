@@ -4,6 +4,7 @@ using DataManagementServer.Sdk.Channels;
 using DataManagementServer.Sdk.PluginInterfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Converters;
 
 var pluginFolderPath = "/Plugins";
 var assemblyLoader = new AssemblyLoader(pluginFolderPath);
@@ -14,7 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Добавляем в сервисы все контроллеры в текущем домене и из загруженных сборок
 builder.Services
     .AddControllers()
-    .AddControllersFromAssemblies(assemblyLoader);
+    .AddControllersFromAssemblies(assemblyLoader)
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.Converters.Add(new StringEnumConverter());
+    });
 
 // Добавляем сервисы ядра
 builder.Services.AddSingleton(assemblyLoader)

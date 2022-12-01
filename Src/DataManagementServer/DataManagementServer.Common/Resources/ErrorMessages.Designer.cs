@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataManagementServer.Core.Resources {
+namespace DataManagementServer.Common.Resources {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace DataManagementServer.Core.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Constants {
+    internal class ErrorMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Constants() {
+        internal ErrorMessages() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace DataManagementServer.Core.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DataManagementServer.Core.Resources.Constants", typeof(Constants).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DataManagementServer.Common.Resources.ErrorMessages", typeof(ErrorMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,11 @@ namespace DataManagementServer.Core.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Description.
+        ///   Ищет локализованную строку, похожую на Value {0} has wrong type (Current type {1}).
         /// </summary>
-        internal static string DefaultChannelDescription {
+        internal static string ValueTypeError {
             get {
-                return ResourceManager.GetString("DefaultChannelDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на NewChannel.
-        /// </summary>
-        internal static string DefaultChannelName {
-            get {
-                return ResourceManager.GetString("DefaultChannelName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на NewGroup.
-        /// </summary>
-        internal static string DefaultGroupName {
-            get {
-                return ResourceManager.GetString("DefaultGroupName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на *.dll.
-        /// </summary>
-        internal static string DllFileNamePattern {
-            get {
-                return ResourceManager.GetString("DllFileNamePattern", resourceCulture);
+                return ResourceManager.GetString("ValueTypeError", resourceCulture);
             }
         }
     }

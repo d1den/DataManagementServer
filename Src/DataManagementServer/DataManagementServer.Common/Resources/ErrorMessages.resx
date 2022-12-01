@@ -117,20 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DefaultChannelDescription" xml:space="preserve">
-    <value>Description</value>
-    <comment>Описание поумолчание</comment>
-  </data>
-  <data name="DefaultChannelName" xml:space="preserve">
-    <value>NewChannel</value>
-    <comment>Стандартное название канала</comment>
-  </data>
-  <data name="DefaultGroupName" xml:space="preserve">
-    <value>NewGroup</value>
-    <comment>Стандартное название группы каналов</comment>
-  </data>
-  <data name="DllFileNamePattern" xml:space="preserve">
-    <value>*.dll</value>
-    <comment>Шаблон названия для файла .dll</comment>
+  <data name="ValueTypeError" xml:space="preserve">
+    <value>Value {0} has wrong type (Current type {1})</value>
+    <comment>Шаблон ошибки о неверном типа значения</comment>
   </data>
 </root>
