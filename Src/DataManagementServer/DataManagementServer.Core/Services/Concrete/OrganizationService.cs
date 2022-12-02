@@ -67,7 +67,8 @@ namespace DataManagementServer.Core.Services.Concrete
         /// </summary>
         public OrganizationService()
         {
-
+            _Groups.AddOrUpdate(Guid.Empty, Group.RootGroup, (id, old) => Group.RootGroup);
+            
             // Созданём уведомителя об обновлении с возможностью его отключения
             var groupsConnectableObservable = Observable.FromEventPattern<CollectionChangeEventArgs>(
                 handler => _GroupsChangeEvent += handler,
@@ -127,6 +128,7 @@ namespace DataManagementServer.Core.Services.Concrete
 
         Guid IGroupService.Create(Guid parentId)
         {
+            (this as IGroupService).ExistOrTrown(parentId);
             var model = new GroupModel() { ParentId = parentId };
             var group = new Group(model);
             _Groups[group.Id] = group;
@@ -143,6 +145,9 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 throw new ArgumentNullException(nameof(model));
             }
+
+            (this as IGroupService).ExistOrTrown(model.ParentId ?? Guid.Empty);
+
             var group = new Group(model);
             _Groups[group.Id] = group;
 
@@ -153,6 +158,12 @@ namespace DataManagementServer.Core.Services.Concrete
         }
         #endregion
 
+        #region
+        void IGroupService.ExistOrTrown(Guid groupId)
+        {
+            (this as IGroupService).Retrieve(groupId);
+        }
+        #endregion
         #region Retrieve
         GroupModel IGroupService.Retrieve(Guid id)
         {
@@ -197,6 +208,10 @@ namespace DataManagementServer.Core.Services.Concrete
         #region Delete
         void IGroupService.Delete(Guid id, bool withChildren)
         {
+            if(Group.RootGroup.Id == id)
+            {
+                throw new ArgumentException(ErrorMessages.ForbiddenToDeleteRootGroup);
+            }
             if (!_Groups.Remove(id, out Group baseGroup))
             {
                 throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
@@ -220,7 +235,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = group.ToModel();
-                    model.ParentId = GroupModel.RootGroupId;
+                    model.ParentId = Group.RootGroup.Id;
 
                     (this as IGroupService).Update(model);
                 }
@@ -234,7 +249,7 @@ namespace DataManagementServer.Core.Services.Concrete
                 else
                 {
                     var model = channel.ToModel();
-                    model.GroupId = GroupModel.RootGroupId;
+                    model.GroupId = Group.RootGroup.Id;
 
                     (this as IChannelService).Update(model);
                 }
@@ -300,6 +315,7 @@ namespace DataManagementServer.Core.Services.Concrete
 
         Guid IChannelService.Create(Guid groupId)
         {
+            (this as IGroupService).ExistOrTrown(groupId);
             var model = new ChannelModel() { GroupId = groupId };
             var channel = new Channel(model);
             _Channels[channel.Id] = channel;
@@ -316,6 +332,11 @@ namespace DataManagementServer.Core.Services.Concrete
             {
                 throw new ArgumentNullException(nameof(model));
             }
+
+
+            (this as IGroupService).ExistOrTrown(model.GroupId ?? Guid.Empty);
+            
+
             var channel = new Channel(model);
             _Channels[channel.Id] = channel;
 

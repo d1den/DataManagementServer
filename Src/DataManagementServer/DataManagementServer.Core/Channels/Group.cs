@@ -14,6 +14,7 @@ namespace DataManagementServer.Core.Channels
     /// </summary>
     public class Group : IDisposable
     {
+        public static Group RootGroup { get; private set; } = new Group(Guid.Empty, Guid.Empty, "RootGroup");
         /// <summary>
         /// Id группы
         /// </summary>
@@ -95,6 +96,16 @@ namespace DataManagementServer.Core.Channels
                 .Publish();
             _ObservableConnection = connectableObservable.Connect();
             ObservableUpdate = connectableObservable;
+        }
+
+        private Group(Guid Id, Guid ParentId, string Name)
+        {
+            this.Id = Id;
+            this.ParentId = ParentId;
+            this.Name = Name;
+            ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
+                 handler => _UpdateEvent += handler,
+                 handler => _UpdateEvent -= handler);
         }
 
         /// <summary>

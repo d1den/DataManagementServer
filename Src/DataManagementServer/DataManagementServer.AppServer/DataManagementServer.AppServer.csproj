@@ -12,10 +12,12 @@
 
   <ItemGroup>
     <Folder Include="Plugins\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataManagementServer.Core\DataManagementServer.Core.csproj" />
+    <ProjectReference Include="..\Pagination\DataManagementServer.Pagination.csproj" />
   </ItemGroup>
 
 </Project>

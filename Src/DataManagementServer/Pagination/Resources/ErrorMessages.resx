@@ -117,24 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChannelNotExistError" xml:space="preserve">
-    <value>Channel with id = {0} not exist!</value>
-    <comment>Шаблон ошибки об отсуствии канала с запрашиваемым Id</comment>
+  <data name="ElementsMoreThanPageSize" xml:space="preserve">
+    <value>There are more elements than the page size</value>
+    <comment>В страницу передано больше элементов, чем ее размер</comment>
   </data>
-  <data name="ForbiddenToDeleteRootGroup" xml:space="preserve">
-    <value>Forbidden to delete root group</value>
-    <comment>Главную группу нельзя удалять</comment>
+  <data name="IncorrectPageNumber" xml:space="preserve">
+    <value>Page number cannot be negative or zero</value>
+    <comment>Номер страницы должен быть больше нуля</comment>
   </data>
-  <data name="GroupNotExistError" xml:space="preserve">
-    <value>Group with id = {0} not exist!</value>
-    <comment>Шаблон ошибки об отсуствии группы с запрашиваемым Id</comment>
+  <data name="IncorrectPageSize" xml:space="preserve">
+    <value>Page size cannot be negative or zero</value>
+    <comment>Размер страницы должен быть больше нуля</comment>
   </data>
-  <data name="PluginNotExistError" xml:space="preserve">
-    <value>Plugin '{0}' doesn`t exist.</value>
-    <comment>Шаблон ошибки при отсутствии плагина</comment>
-  </data>
-  <data name="ValueTypeError" xml:space="preserve">
-    <value>Value {0} has wrong type (Current type {1})</value>
-    <comment>Шаблон ошибки о неверном типа значения</comment>
+  <data name="IncorrectTotalElementsCount" xml:space="preserve">
+    <value>Element count cannot be negative</value>
+    <comment>Количество элементов не может быть меньше нуля</comment>
   </data>
 </root>

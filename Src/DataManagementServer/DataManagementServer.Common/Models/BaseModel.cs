@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿
 using System;
+using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -16,15 +17,13 @@ namespace DataManagementServer.Common.Models
         /// <summary>
         /// Поля канала
         /// </summary>
-        public FieldValueCollection Fields { get; private set; } = new();
+        public FieldValueCollection Fields { get; set; } = new();
 
         /// <summary>
         /// Свойство доступа к поля модели
         /// </summary>
         /// <param name="fieldName">Название поля</param>
         /// <returns>Значение поля</returns>
-        [System.Text.Json.Serialization.JsonIgnore]
-        [JsonIgnore]
         public object this[string fieldName]
         {
             get { return Fields[fieldName]; }
