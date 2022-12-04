@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataManagementServer.Core.Resources {
+namespace DataManagementServer.Common.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DataManagementServer.Core.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DataManagementServer.Core.Resources.Constants", typeof(Constants).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DataManagementServer.Common.Resources.Constants", typeof(Constants).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

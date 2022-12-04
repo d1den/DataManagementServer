@@ -1,6 +1,8 @@
-﻿using DataManagementServer.Common.Schemes;
+﻿using DataManagementServer.Common.Resources;
+using DataManagementServer.Common.Schemes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Text.Json.Serialization;
 
 namespace DataManagementServer.Common.Models
 {
@@ -10,11 +12,6 @@ namespace DataManagementServer.Common.Models
     public class GroupModel : BaseModel
     {
         /// <summary>
-        /// Id группы
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
         /// Id родительской группы
         /// </summary>
         [JsonIgnore]
@@ -22,9 +19,24 @@ namespace DataManagementServer.Common.Models
         {
             get
             {
-                if (TryGetFieldValue(GroupScheme.ParentId, out Guid parentId))
+                if (TryGetFieldValue(GroupScheme.ParentId, out object parentId))
                 {
-                    return parentId;
+                    if (parentId is Guid)
+                    {
+                        return (Guid)parentId;
+                    }
+
+                    if (parentId is string)
+                    {
+                        return Guid.Parse(parentId as string);
+                    }
+
+                    if (parentId is null)
+                    {
+                        return null;
+                    }
+
+                    throw new InvalidCastException(string.Format(ErrorMessages.ValueTypeError, typeof(Guid), parentId?.GetType()));
                 }
                 else
                 {
