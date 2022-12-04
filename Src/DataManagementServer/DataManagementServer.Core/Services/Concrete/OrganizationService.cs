@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 
@@ -31,7 +30,12 @@ namespace DataManagementServer.Core.Services.Concrete
         /// <summary>
         /// Уведомитель об изменении коллекции групп
         /// </summary>
-        private readonly IObservable<EventPattern<CollectionChangeEventArgs>> _GroupsObservable;
+        private readonly IObservable<CollectionChangeEventArgs> _GroupsObservable;
+
+        /// <summary>
+        /// Соединение уведомителя коллекции групп
+        /// </summary>
+        private readonly IDisposable _GroupsObservableConnection;
 
         /// <summary>
         /// Словарь каналов
@@ -46,7 +50,12 @@ namespace DataManagementServer.Core.Services.Concrete
         /// <summary>
         /// Уведомитель об изменении коллекции каналов
         /// </summary>
-        private readonly IObservable<EventPattern<CollectionChangeEventArgs>> _ChannelsObservable;
+        private readonly IObservable<CollectionChangeEventArgs> _ChannelsObservable;
+
+        /// <summary>
+        /// Соединение уведомителя коллекции каналов
+        /// </summary>
+        private readonly IDisposable _ChannelsObservableConnection;
 
         /// <summary>
         /// Уже уничтожен?
@@ -59,16 +68,21 @@ namespace DataManagementServer.Core.Services.Concrete
         public OrganizationService()
         {
             _Groups.AddOrUpdate(Guid.Empty, Group.RootGroup, (id, old) => Group.RootGroup);
-
-            _GroupsObservable = Observable
-                .FromEventPattern<CollectionChangeEventArgs>(
+            
+            // Созданём уведомителя об обновлении с возможностью его отключения
+            var groupsConnectableObservable = Observable.FromEventPattern<CollectionChangeEventArgs>(
                 handler => _GroupsChangeEvent += handler,
-                handler => _GroupsChangeEvent -= handler);
+                handler => _GroupsChangeEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _GroupsObservableConnection = groupsConnectableObservable.Connect();
+            _GroupsObservable = groupsConnectableObservable;
 
-            _ChannelsObservable = Observable
-                .FromEventPattern<CollectionChangeEventArgs>(
+            var cchannelCnnectableObservable = Observable.FromEventPattern<CollectionChangeEventArgs>(
                 handler => _ChannelsChangeEvent += handler,
-                handler => _ChannelsChangeEvent -= handler);
+                handler => _ChannelsChangeEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _ChannelsObservableConnection = cchannelCnnectableObservable.Connect();
+            _ChannelsObservable = cchannelCnnectableObservable;
         }
 
         public void Dispose()
@@ -83,12 +97,14 @@ namespace DataManagementServer.Core.Services.Concrete
                 group.Dispose();
             }
             _Groups.Clear();
+            _GroupsObservableConnection?.Dispose();
 
             foreach(var channel in _Channels.Values)
             {
                 channel.Dispose();
             }
             _Channels.Clear();
+            _ChannelsObservableConnection?.Dispose();
 
             _IsDisposed = true;
         }
@@ -96,7 +112,7 @@ namespace DataManagementServer.Core.Services.Concrete
         #region Groups
         int IGroupService.Count => _Groups.Count;
 
-        IObservable<EventPattern<CollectionChangeEventArgs>> IGroupService.ObservableChange => _GroupsObservable;
+        IObservable<CollectionChangeEventArgs> IGroupService.ObservableChange => _GroupsObservable;
 
         #region Create
         Guid IGroupService.Create()
@@ -244,12 +260,13 @@ namespace DataManagementServer.Core.Services.Concrete
         }
         #endregion
 
-        IObservable<EventPattern<UpdateEventArgs>> IGroupService.GetObservableUpdate(Guid id)
+        IObservable<UpdateEventArgs> IGroupService.GetObservableUpdate(Guid id)
         {
             if (_Groups.TryGetValue(id, out var group))
             {
                 return group.ObservableUpdate;
             }
+
             throw new KeyNotFoundException(string.Format(ErrorMessages.GroupNotExistError, id));
         }
 
@@ -262,7 +279,6 @@ namespace DataManagementServer.Core.Services.Concrete
             if (_Groups.TryGetValue(id, out var group))
             {
                 group.ObservableUpdate
-                    .Select(data => data.EventArgs)
                     .Subscribe(handler, token);
                 return;
             }
@@ -276,7 +292,6 @@ namespace DataManagementServer.Core.Services.Concrete
                 throw new ArgumentNullException(nameof(handler));
             }
             (this as IGroupService).ObservableChange
-                .Select(data => data.EventArgs)
                 .Subscribe(handler, token);
         }
         #endregion
@@ -284,7 +299,7 @@ namespace DataManagementServer.Core.Services.Concrete
         #region Channels
         int IChannelService.Count => _Channels.Count;
 
-        IObservable<EventPattern<CollectionChangeEventArgs>> IChannelService.ObservableChange => _ChannelsObservable;
+        IObservable<CollectionChangeEventArgs> IChannelService.ObservableChange => _ChannelsObservable;
 
         #region Create
         Guid IChannelService.Create()
@@ -446,7 +461,7 @@ namespace DataManagementServer.Core.Services.Concrete
         }
         #endregion
 
-        IObservable<EventPattern<UpdateEventArgs>> IChannelService.GetObservableUpdate(Guid id)
+        IObservable<UpdateEventArgs> IChannelService.GetObservableUpdate(Guid id)
         {
             if (_Channels.TryGetValue(id, out var channel))
             {
@@ -464,7 +479,6 @@ namespace DataManagementServer.Core.Services.Concrete
             if (_Channels.TryGetValue(id, out var channel))
             {
                 channel.ObservableUpdate
-                    .Select(data => data.EventArgs)
                     .Subscribe(handler, token);
                 return;
             }
@@ -478,7 +492,6 @@ namespace DataManagementServer.Core.Services.Concrete
                 throw new ArgumentNullException(nameof(handler));
             }
             (this as IChannelService).ObservableChange
-                .Select(data => data.EventArgs)
                 .Subscribe(handler, token);
         }
         #endregion

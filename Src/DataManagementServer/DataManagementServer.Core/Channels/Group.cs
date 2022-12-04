@@ -35,10 +35,16 @@ namespace DataManagementServer.Core.Channels
         /// </summary>
         private event EventHandler<UpdateEventArgs> _UpdateEvent;
 
+
         /// <summary>
-        /// Уведомитель об обновлении
+        /// Уведомитель об обновлении канала
         /// </summary>
-        public IObservable<EventPattern<UpdateEventArgs>> ObservableUpdate { get; }
+        public IObservable<UpdateEventArgs> ObservableUpdate { get; }
+
+        /// <summary>
+        /// Соединение уведомителя
+        /// </summary>
+        private readonly IDisposable _ObservableConnection;
 
         /// <summary>
         /// Объект для синхронизации потоков
@@ -56,9 +62,14 @@ namespace DataManagementServer.Core.Channels
         public Group()
         {
             Id = Guid.NewGuid();
-            ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
+
+            // Созданём уведомителя об обновлении с возможностью его отключения
+            var connectableObservable = Observable.FromEventPattern<UpdateEventArgs>(
                 handler => _UpdateEvent += handler,
-                handler => _UpdateEvent -= handler);
+                handler => _UpdateEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _ObservableConnection = connectableObservable.Connect();
+            ObservableUpdate = connectableObservable;
         }
 
         /// <summary>
@@ -77,9 +88,14 @@ namespace DataManagementServer.Core.Channels
                 : model.Id;
 
             SetFieldsByModel(model);
-            ObservableUpdate = Observable.FromEventPattern<UpdateEventArgs>(
+
+            // Созданём уведомителя об обновлении с возможностью его отключения
+            var connectableObservable = Observable.FromEventPattern<UpdateEventArgs>(
                 handler => _UpdateEvent += handler,
-                handler => _UpdateEvent -= handler);
+                handler => _UpdateEvent -= handler).Select(e => e.EventArgs)
+                .Publish();
+            _ObservableConnection = connectableObservable.Connect();
+            ObservableUpdate = connectableObservable;
         }
 
         private Group(Guid Id, Guid ParentId, string Name)
@@ -178,6 +194,7 @@ namespace DataManagementServer.Core.Channels
                 return;
             }
 
+            _ObservableConnection?.Dispose();
             _Lock.Dispose();
             _IsDisposed = true;
         }
