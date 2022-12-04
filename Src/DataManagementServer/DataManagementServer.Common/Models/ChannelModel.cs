@@ -110,9 +110,9 @@ namespace DataManagementServer.Common.Models
                         return typeCode;
                     }
 
-                    if (value is string)
+                    if (value is long)
                     {
-                        return (TypeCode) Enum.Parse(typeof(TypeCode), value as string, true);
+                        return (TypeCode) Enum.ToObject(typeof(TypeCode), value);
                     }
 
                     if (value is null)
@@ -209,9 +209,9 @@ namespace DataManagementServer.Common.Models
                         return channelStatus;
                     }
 
-                    if (value is string)
+                    if (value is long)
                     {
-                        return (ChannelStatus)Enum.Parse(typeof(ChannelStatus), value as string, true);
+                        return (ChannelStatus)Enum.ToObject(typeof(ChannelStatus), value);
                     }
                     
                     if(value is null)

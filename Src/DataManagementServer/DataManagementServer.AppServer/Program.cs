@@ -16,10 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddControllers()
     .AddControllersFromAssemblies(assemblyLoader)
-    .AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.Converters.Add(new StringEnumConverter());
-    });
+    .AddNewtonsoftJson();
 
 // Добавляем сервисы ядра
 builder.Services.AddSingleton(assemblyLoader)
