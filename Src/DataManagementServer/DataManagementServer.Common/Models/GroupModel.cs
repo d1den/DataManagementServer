@@ -10,11 +10,6 @@ namespace DataManagementServer.Common.Models
     public class GroupModel : BaseModel
     {
         /// <summary>
-        /// Id группы
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
         /// Id родительской группы
         /// </summary>
         [JsonIgnore]
