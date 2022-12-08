@@ -1,7 +1,6 @@
 ﻿using DataManagementServer.Common.Models;
 using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Threading;
 
 namespace DataManagementServer.Sdk.Channels
@@ -19,7 +18,7 @@ namespace DataManagementServer.Sdk.Channels
         /// <summary>
         /// Уведомитель об изменении коллекции
         /// </summary>
-        IObservable<EventPattern<CollectionChangeEventArgs>> ObservableChange { get; }
+        IObservable<CollectionChangeEventArgs> ObservableChange { get; }
 
         #region Create
         /// <summary>
@@ -93,7 +92,7 @@ namespace DataManagementServer.Sdk.Channels
         /// </summary>
         /// <param name="id">Id группы</param>
         /// <returns>Rx объект события обновления</returns>
-        IObservable<EventPattern<UpdateEventArgs>> GetObservableUpdate(Guid id);
+        IObservable<UpdateEventArgs> GetObservableUpdate(Guid id);
 
         /// <summary>
         /// Подписаться на обновление группы
