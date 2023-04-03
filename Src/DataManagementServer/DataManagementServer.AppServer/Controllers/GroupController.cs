@@ -74,7 +74,7 @@ namespace DataManagementServer.AppServer.Controllers
 
         [HttpGet]
         public ActionResult<Page<GroupModel>> GetGroupByParent(
-            [FromQuery(Name = "groupId")] Guid parentId,
+            [FromQuery(Name = "parentId")] Guid parentId,
             [FromQuery(Name = "page")] PageRequest pageRequest,
             [FromQuery(Name = "allFields")] bool allFields = true)
         {
